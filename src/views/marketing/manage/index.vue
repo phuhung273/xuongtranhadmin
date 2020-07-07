@@ -234,12 +234,13 @@
 </template>
 
 <script>
-import { fetchList, fetchPv, createArticle, updateArticle } from '@/api/article'
+import { fetchPv } from '@/api/article'
 import {
   fetchMarketingList,
   createMarketingTask,
   updateMarketingTask
 } from '@/api/table'
+import { fillFormObject } from '@/utils/form'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 
@@ -424,6 +425,8 @@ export default {
           //     duration: 2000
           //   })
           // })
+          fillFormObject(this.temp)
+          // console.log(this.temp)
 
           createMarketingTask(this.temp).then(() => {
             this.list.unshift(this.temp)
@@ -467,7 +470,7 @@ export default {
           //     duration: 2000
           //   })
           // })
-
+          fillFormObject(tempData)
           updateMarketingTask(tempData).then(() => {
             const index = this.list.findIndex(v => v.id === this.temp.id)
             this.list.splice(index, 1, this.temp)
