@@ -83,26 +83,40 @@ export const constantRoutes = [
   },
 
   {
-    path: '/customer',
+    path: '/sales',
     component: Layout,
-    redirect: '/customer/index',
-    name: 'Khách Hàng',
+    redirect: '/sales/index',
+    name: 'Sales',
     meta: {
-      title: 'Khách Hàng',
-      icon: 'el-icon-s-custom'
+      title: 'Sales',
+      icon: 'el-icon-s-shop'
     },
     children: [
       {
         path: 'index',
         component: () => import('@/views/nested/menu1/index'), // Parent router-view
-        name: 'customer_index',
+        name: 'sales_index',
         meta: { title: 'Thống kê' }
       },
       {
         path: 'manage',
-        component: () => import('@/views/nested/menu2/index'),
-        name: 'customer_manage',
-        meta: { title: 'Quản lý khách hàng' }
+        component: () => import('@/views/sales/manage/index'),
+        name: 'sales_manage',
+        meta: { title: 'Quản lý Sales' }
+      }
+    ]
+  },
+
+  {
+    path: '/customer',
+    component: Layout,
+    redirect: '/customer/index',
+    children: [
+      {
+        path: 'index',
+        name: 'Khách Hàng',
+        component: () => import('@/views/customer/index'),
+        meta: { title: 'Khách Hàng', icon: 'el-icon-s-custom' }
       }
     ]
   },

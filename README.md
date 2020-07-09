@@ -1,8 +1,8 @@
 # xuongtranhnetviet Admin Page
 
-Using vue-admin-template: http://panjiachen.github.io/vue-admin-template
+Using vue-admin-template: https://panjiachen.github.io/vue-element-admin-site/
 
-**Site:** https://phuhung273.github.io/xuongtranhadmin/
+**Official Site:** https://phuhung273.github.io/xuongtranhadmin/
 
 ## Browsers support
 

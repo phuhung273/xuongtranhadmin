@@ -15,7 +15,12 @@
         style="width: 140px"
         class="filter-item"
       >
-        <el-option v-for="item in sourceOptions" :key="item" :label="item" :value="item" />
+        <el-option
+          v-for="item in sourceOptions"
+          :key="item"
+          :label="item"
+          :value="item"
+        />
       </el-select>
 
       <el-button
@@ -24,7 +29,9 @@
         type="primary"
         icon="el-icon-search"
         @click="handleFilter"
-      >Tìm Kiếm</el-button>
+      >
+        Tìm Kiếm
+      </el-button>
 
       <el-button
         class="filter-item"
@@ -32,7 +39,9 @@
         type="primary"
         icon="el-icon-edit"
         @click="handleCreate"
-      >Thêm Task</el-button>
+      >
+        Thêm Khách Hàng
+      </el-button>
 
       <!-- <el-button
         v-waves
@@ -53,12 +62,18 @@
       highlight-current-row
       style="width: 100%;"
     >
-      <el-table-column label="Ngày" width="200px" align="center">
+      <el-table-column label="Ngày" width="150px" align="center">
         <template slot-scope="{ row }">
           <!-- <span>{{ row.timestamp | parseTime('{y}-{m}-{d} {h}:{i}') }}</span> -->
           <!-- <span>{{ row.time | parseTime('{y}-{m}-{d} {h}:{i}') }}</span> -->
           <span>{{ row.time | parseHCMDate }}</span>
           <!-- <span>{{ row.time }}</span> -->
+        </template>
+      </el-table-column>
+
+      <el-table-column label="Khách Hàng" width="200px">
+        <template slot-scope="{ row }">
+          <span>{{ row.customer }}</span>
         </template>
       </el-table-column>
 
@@ -68,58 +83,39 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="Sản Phẩm" width="110px" align="center">
+      <el-table-column label="Hành động" width="150px" align="center">
         <template slot-scope="{ row }">
-          <span>{{ row.product }}</span>
+          <span>{{ row.action }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column label="Nội Dung" width="300px" align="center">
+      <el-table-column label="Nhu Cầu" width="200px" align="center">
         <template slot-scope="{ row }">
-          <span>{{ row.content }}</span>
+          <span>{{ row.demand }}</span>
         </template>
       </el-table-column>
 
-      <!-- <el-table-column
-        v-if="showReviewer"
-        label="Reviewer"
-        width="110px"
-        align="center"
-      >
+      <el-table-column label="Tương Tác" width="300px" align="center">
         <template slot-scope="{ row }">
-          <span style="color:red;">{{ row.reviewer }}</span>
-        </template>
-      </el-table-column>-->
-
-      <el-table-column label="Kết Quả" width="80px">
-        <template slot-scope="{ row }">
-          <!-- <svg-icon
-            v-for="n in + row.importance"
-            :key="n"
-            icon-class="star"
-            class="meta-item__icon"
-          />-->
-          {{ row.result }}
+          <span>{{ row.connection }}</span>
         </template>
       </el-table-column>
 
-      <!-- <el-table-column label="Readings" align="center" width="95">
-        <template slot-scope="{ row }">
-          <span
-            v-if="row.pageviews"
-            class="link-type"
-            @click="handleFetchPv(row.pageviews)"
-            >{{ row.pageviews }}</span
-          >
-          <span v-else>0</span>
-        </template>
+      <el-table-column label="Chốt Deal" class-name="status-col" width="100">
+        <template slot-scope="{ row }">{{ row.status }}</template>
       </el-table-column>
 
-      <el-table-column label="Status" class-name="status-col" width="100">
-        <template slot-scope="{ row }">
-          <el-tag :type="row.status | statusFilter">{{ row.status }}</el-tag>
-        </template>
-      </el-table-column>-->
+      <el-table-column label="Loại" width="150px">
+        <template slot-scope="{ row }">{{ row.category }}</template>
+      </el-table-column>
+
+      <el-table-column label="Email" width="150px">
+        <template slot-scope="{ row }">{{ row.email }}</template>
+      </el-table-column>
+
+      <el-table-column label="Điện Thoại" width="150px">
+        <template slot-scope="{ row }">{{ row.phone }}</template>
+      </el-table-column>
 
       <el-table-column
         label="Chỉnh Sửa"
@@ -128,13 +124,18 @@
         class-name="small-padding fixed-width"
       >
         <template slot-scope="{ row, $index }">
-          <el-button type="primary" size="mini" @click="handleUpdate(row)">Chỉnh Sửa</el-button>
+          <el-button type="primary" size="mini" @click="handleUpdate(row)">
+            Chỉnh Sửa
+          </el-button>
+
           <el-button
             v-if="row.status != 'deleted'"
             size="mini"
             type="danger"
             @click="handleDelete(row, $index)"
-          >Xoá</el-button>
+          >
+            Xoá
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -153,10 +154,40 @@
         label-width="100px"
         style="width: 400px; margin-left:50px;"
       >
+        <el-form-item label="Khách Hàng" prop="customer">
+          <el-input v-model="temp.customer" placeholder="Tên khách hàng" />
+        </el-form-item>
+
         <el-form-item label="Nguồn" prop="source">
-          <el-select v-model="temp.source" class="filter-item" placeholder="Chọn nguồn">
-            <el-option v-for="item in sourceOptions" :key="item" :label="item" :value="item" />
+          <el-select
+            v-model="temp.source"
+            class="filter-item"
+            placeholder="Chọn nguồn"
+          >
+            <el-option
+              v-for="item in sourceOptions"
+              :key="item"
+              :label="item"
+              :value="item"
+            />
           </el-select>
+        </el-form-item>
+
+        <el-form-item label="Hành Động" prop="action">
+          <el-input v-model="temp.action" />
+        </el-form-item>
+
+        <el-form-item label="Nhu Cầu" prop="demand">
+          <el-input v-model="temp.demand" />
+        </el-form-item>
+
+        <el-form-item label="Tương Tác" prop="connection">
+          <el-input
+            v-model="temp.connection"
+            :autosize="{ minRows: 2, maxRows: 4 }"
+            type="textarea"
+            placeholder="Nội dung tương tác"
+          />
         </el-form-item>
 
         <el-form-item label="Thời Gian" prop="time">
@@ -164,38 +195,42 @@
           <el-date-picker v-model="temp.time" placeholder="Chọn ngày" />
         </el-form-item>
 
-        <el-form-item label="Sản Phẩm" prop="product">
-          <el-input v-model="temp.product" />
+        <el-form-item label="Chốt Deal" prop="status">
+          <el-select
+            v-model="temp.status"
+            class="filter-item"
+            placeholder="Tình trạng deal"
+          >
+            <el-option
+              v-for="item in statusOptions"
+              :key="item"
+              :label="item"
+              :value="item"
+            />
+          </el-select>
         </el-form-item>
 
-        <el-form-item label="Kết Quả" prop="result">
-          <el-input v-model="temp.result" type="number" />
+        <el-form-item label="Loại" prop="category">
+          <el-input v-model="temp.category" />
         </el-form-item>
 
-        <!-- <el-form-item label="Imp">
-          <el-rate
-            v-model="temp.importance"
-            :colors="['#99A9BF', '#F7BA2A', '#FF9900']"
-            :max="3"
-            style="margin-top:8px;"
-          />
-        </el-form-item>-->
+        <el-form-item label="Email" prop="email">
+          <el-input v-model="temp.email" />
+        </el-form-item>
 
-        <el-form-item label="Nội Dung">
-          <el-input
-            v-model="temp.content"
-            :autosize="{ minRows: 2, maxRows: 4 }"
-            type="textarea"
-            placeholder="Nhập nội dung"
-          />
+        <el-form-item label="Điện Thoại" prop="phone">
+          <el-input v-model="temp.phone" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">Huỷ</el-button>
+
         <el-button
           type="primary"
           @click="dialogStatus === 'create' ? createData() : updateData()"
-        >Xác Nhận</el-button>
+        >
+          Xác Nhận
+        </el-button>
       </div>
     </el-dialog>
 
@@ -211,27 +246,19 @@
         <el-button type="danger" @click="deleteData()">Xoá</el-button>
       </span>
     </el-dialog>
-
-    <el-dialog :visible.sync="dialogPvVisible" title="Reading statistics">
-      <el-table :data="pvData" border fit highlight-current-row style="width: 100%">
-        <el-table-column prop="key" label="Channel" />
-        <el-table-column prop="pv" label="Pv" />
-      </el-table>
-      <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="dialogPvVisible = false">Confirm</el-button>
-      </span>
-    </el-dialog>
   </div>
 </template>
 
 <script>
 import { fetchPv } from '@/api/article'
+
 import {
-  fetchMarketingList,
-  createMarketingTask,
-  updateMarketingTask,
-  deleteMarketingTask
-} from '@/api/marketing'
+  fetchCustomerList,
+  createCustomer,
+  updateCustomer,
+  deleteCustomer
+} from '@/api/sales'
+
 import { fillFormObject } from '@/utils/form'
 import waves from '@/directive/waves' // waves directive
 
@@ -244,14 +271,6 @@ export default {
   components: {},
   directives: { waves },
   filters: {
-    statusFilter(status) {
-      const statusMap = {
-        published: 'success',
-        draft: 'info',
-        deleted: 'danger'
-      }
-      return statusMap[status]
-    },
     parseHCMDate(dateString) {
       const date = Date.parse(dateString)
       const hcmDate = intlDateObj.format(date)
@@ -269,20 +288,34 @@ export default {
         limit: 20,
         source: undefined
       },
-      sourceOptions: ['Facebook', 'SEO', 'SEM'],
+      sourceOptions: ['FB Lead', 'Hotline', 'Zalo'],
+      statusOptions: [
+        'Hello',
+        'Consulting',
+        'Design Pick-up',
+        'Contract Sent',
+        '1st Deposit',
+        'Production',
+        'Fully Payment',
+        'Lost'
+      ],
       temp: {
         id: undefined,
+        customer: undefined,
         source: undefined,
-        product: undefined,
-        content: undefined,
-        time: undefined,
-        result: undefined
+        action: undefined,
+        demand: undefined,
+        connection: undefined,
+        status: undefined,
+        category: undefined,
+        email: undefined,
+        phone: undefined
       },
       dialogFormVisible: false,
       dialogStatus: '',
       textMap: {
         update: 'Chỉnh Sửa',
-        create: 'Thêm Task'
+        create: 'Thêm Khách Hàng'
       },
       dialogPvVisible: false,
       pvData: [],
@@ -298,11 +331,19 @@ export default {
             trigger: 'change'
           }
         ],
-        product: [
-          { required: true, message: 'Vui lòng nhập sản phẩm', trigger: 'blur' }
+        connection: [
+          {
+            required: true,
+            message: 'Vui lòng nhập tương tác',
+            trigger: 'change'
+          }
         ],
-        result: [
-          { required: true, message: 'Vui lòng nhập số', trigger: 'blur' }
+        customer: [
+          {
+            required: true,
+            message: 'Vui lòng nhập khách hàng',
+            trigger: 'change'
+          }
         ]
       },
       downloadLoading: false,
@@ -319,17 +360,10 @@ export default {
   methods: {
     getList() {
       this.listLoading = true
-      //   fetchList(this.listQuery).then(response => {
-      //     this.list = response.data.items
-      //     this.total = response.data.total
 
-      //     // Just to simulate the time of the request
-      //     setTimeout(() => {
-      //       this.listLoading = false
-      //     }, 1.5 * 1000)
-      //   })
+      // console.log(this.listQuery)
 
-      fetchMarketingList(this.listQuery).then(response => {
+      fetchCustomerList(this.listQuery).then(response => {
         // console.log(response)
         this.list = response.data.items
         this.total = response.data.total
@@ -366,21 +400,7 @@ export default {
           // console.log(this.temp)
           this.dialogFormLoading = true
 
-          // setTimeout(() => {
-          //   createMarketingTask(this.temp).then(() => {
-          //     this.list.unshift(this.temp)
-          //     this.dialogFormVisible = false
-          //     this.dialogFormLoading = false
-          //     this.$notify({
-          //       title: 'Thành Công',
-          //       message: 'Thêm thành công',
-          //       type: 'success',
-          //       duration: 2000
-          //     })
-          //   })
-          // }, 1000)
-
-          createMarketingTask(this.temp).then(() => {
+          createCustomer(this.temp).then(() => {
             this.list.unshift(this.temp)
             this.dialogFormVisible = false
             this.dialogFormLoading = false
@@ -414,7 +434,7 @@ export default {
           fillFormObject(tempData)
           this.dialogFormLoading = true
 
-          updateMarketingTask(tempData).then(() => {
+          updateCustomer(tempData).then(() => {
             const index = this.list.findIndex(v => v.id === this.temp.id)
             this.list.splice(index, 1, this.temp)
             this.dialogFormLoading = false
@@ -438,7 +458,7 @@ export default {
     deleteData() {
       this.dialogDeleteLoading = true
 
-      deleteMarketingTask({ id: this.tempDeleteId }).then(() => {
+      deleteCustomer({ id: this.tempDeleteId }).then(() => {
         this.list.splice(this.tempDeleteIndex, 1)
         this.dialogDeleteLoading = false
         this.dialogDeleteVisible = false
