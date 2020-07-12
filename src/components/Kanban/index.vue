@@ -1,16 +1,24 @@
 <template>
   <div class="board-column">
-    <div class="board-column-header">
-      {{ headerText }}
-    </div>
+    <div class="board-column-header">{{ headerText }}</div>
+
     <draggable
       :list="list"
       v-bind="$attrs"
       class="board-column-content"
       :set-data="setData"
+      @change="changeHandle"
     >
       <div v-for="element in list" :key="element.id" class="board-item">
-        {{ element.customer }}
+        <div class="board-item-customer">{{ element.customer }}</div>
+        <div class="board-item-time">Tương tác cuối: {{ element.time | parseHCMDate }}</div>
+        <div class="board-item-staff">
+          <div class="staff-row">
+            <el-tooltip effect="dark" :content="element.customer" placement="bottom">
+              <el-avatar size="medium">{{ element.customer }}</el-avatar>
+            </el-tooltip>
+          </div>
+        </div>
       </div>
     </draggable>
   </div>
@@ -18,11 +26,16 @@
 
 <script>
 import draggable from 'vuedraggable'
+import { updateCustomerFunnel } from '@/api/customer'
+import { parseHCMDate } from '@/utils/time'
 
 export default {
   name: 'DragKanbanDemo',
   components: {
     draggable
+  },
+  filters: {
+    parseHCMDate
   },
   props: {
     headerText: {
@@ -47,6 +60,17 @@ export default {
       // to avoid Firefox bug
       // Detail see : https://github.com/RubaXa/Sortable/issues/1012
       dataTransfer.setData('Text', '')
+    },
+    changeHandle(event) {
+      const isElementAdded = event.added !== undefined
+
+      if (isElementAdded) {
+        const { id } = event.added.element
+        const info = { id: id, status: this.headerText }
+        updateCustomerFunnel(info).catch(error => {
+          console.log(error)
+        })
+      }
     }
   }
 }
@@ -55,7 +79,8 @@ export default {
 .board-column {
   min-width: 300px;
   min-height: 100px;
-  height: auto;
+  // height: auto;
+  height: 100%;
   overflow: hidden;
   background: #f0f0f0;
   border-radius: 3px;
@@ -72,7 +97,8 @@ export default {
   }
 
   .board-column-content {
-    height: auto;
+    // height: auto;
+    height: 100%;
     overflow: hidden;
     border: 10px solid transparent;
     min-height: 60px;
@@ -82,16 +108,37 @@ export default {
     align-items: center;
 
     .board-item {
-      cursor: pointer;
+      cursor: grab;
       width: 100%;
-      height: 64px;
+      // height: 64px;
       margin: 5px 0;
       background-color: #fff;
       text-align: left;
-      line-height: 54px;
+      // line-height: 54px;
       padding: 5px 10px;
       box-sizing: border-box;
       box-shadow: 0px 1px 3px 0 rgba(0, 0, 0, 0.2);
+
+      .board-item-customer,
+      .board-item-time {
+        height: 30px;
+        display: flex;
+        align-items: center;
+      }
+
+      .board-item-customer {
+        font-size: 16px;
+      }
+
+      .board-item-time {
+        font-size: 14px;
+      }
+
+      .board-item-staff {
+        .staff-row {
+          float: right;
+        }
+      }
     }
   }
 }

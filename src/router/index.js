@@ -51,7 +51,7 @@ export const constantRoutes = [
       {
         path: 'index',
         name: 'Bảng Điều Khiển',
-        component: () => import('@/views/dashboard/index'),
+        component: () => import('@/views/dashboard'),
         meta: { title: 'Bảng Điều Khiển', icon: 'dashboard' }
       }
     ]
@@ -69,13 +69,13 @@ export const constantRoutes = [
     children: [
       {
         path: 'index',
-        component: () => import('@/views/marketing/dashboard/index'), // Parent router-view
+        component: () => import('@/views/marketing/dashboard'), // Parent router-view
         name: 'marketing_index',
         meta: { title: 'Thống kê' }
       },
       {
         path: 'manage',
-        component: () => import('@/views/marketing/manage/index'),
+        component: () => import('@/views/marketing/manage'),
         name: 'marketing_manage',
         meta: { title: 'Quản lý task' }
       }
@@ -100,7 +100,7 @@ export const constantRoutes = [
       },
       {
         path: 'manage',
-        component: () => import('@/views/sales/manage/index'),
+        component: () => import('@/views/sales/manage'),
         name: 'sales_manage',
         meta: { title: 'Quản lý Sales' }
       }
@@ -115,7 +115,7 @@ export const constantRoutes = [
       {
         path: 'index',
         name: 'Khách Hàng',
-        component: () => import('@/views/customer/index'),
+        component: () => import('@/views/customer'),
         meta: { title: 'Khách Hàng', icon: 'el-icon-s-custom' }
       }
     ]

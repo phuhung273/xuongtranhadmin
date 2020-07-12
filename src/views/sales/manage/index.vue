@@ -15,12 +15,7 @@
         style="width: 140px"
         class="filter-item"
       >
-        <el-option
-          v-for="item in sourceOptions"
-          :key="item"
-          :label="item"
-          :value="item"
-        />
+        <el-option v-for="item in sourceOptions" :key="item" :label="item" :value="item" />
       </el-select>
 
       <el-button
@@ -29,9 +24,7 @@
         type="primary"
         icon="el-icon-search"
         @click="handleFilter"
-      >
-        Tìm Kiếm
-      </el-button>
+      >Tìm Kiếm</el-button>
 
       <el-button
         class="filter-item"
@@ -39,9 +32,7 @@
         type="primary"
         icon="el-icon-edit"
         @click="handleCreate"
-      >
-        Thêm Khách Hàng
-      </el-button>
+      >Thêm Khách Hàng</el-button>
 
       <!-- <el-button
         v-waves
@@ -124,18 +115,14 @@
         class-name="small-padding fixed-width"
       >
         <template slot-scope="{ row, $index }">
-          <el-button type="primary" size="mini" @click="handleUpdate(row)">
-            Chỉnh Sửa
-          </el-button>
+          <el-button type="primary" size="mini" @click="handleUpdate(row)">Chỉnh Sửa</el-button>
 
           <el-button
             v-if="row.status != 'deleted'"
             size="mini"
             type="danger"
             @click="handleDelete(row, $index)"
-          >
-            Xoá
-          </el-button>
+          >Xoá</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -154,34 +141,37 @@
         label-width="100px"
         style="width: 400px; margin-left:50px;"
       >
-        <el-form-item label="Khách Hàng" prop="customer">
+        <el-form-item label="Khách Hàng" prop="customer" label-width="150px">
           <el-input v-model="temp.customer" placeholder="Tên khách hàng" />
         </el-form-item>
 
-        <el-form-item label="Nguồn" prop="source">
-          <el-select
-            v-model="temp.source"
-            class="filter-item"
-            placeholder="Chọn nguồn"
-          >
-            <el-option
-              v-for="item in sourceOptions"
-              :key="item"
-              :label="item"
-              :value="item"
-            />
+        <el-form-item label="Nguồn" prop="source" label-width="150px">
+          <el-select v-model="temp.source" class="filter-item" placeholder="Chọn nguồn">
+            <el-option v-for="item in sourceOptions" :key="item" :label="item" :value="item" />
           </el-select>
         </el-form-item>
 
-        <el-form-item label="Hành Động" prop="action">
-          <el-input v-model="temp.action" />
-        </el-form-item>
-
-        <el-form-item label="Nhu Cầu" prop="demand">
+        <el-form-item label="Nhu Cầu" prop="demand" label-width="150px">
           <el-input v-model="temp.demand" />
         </el-form-item>
 
-        <el-form-item label="Tương Tác" prop="connection">
+        <el-form-item label="Loại" prop="category" label-width="150px">
+          <el-input v-model="temp.category" />
+        </el-form-item>
+
+        <el-form-item label="Email" prop="email" label-width="150px">
+          <el-input v-model="temp.email" />
+        </el-form-item>
+
+        <el-form-item label="Điện Thoại" prop="phone" label-width="150px">
+          <el-input v-model="temp.phone" />
+        </el-form-item>
+
+        <el-form-item label="Hành Động" prop="action" label-width="150px">
+          <el-input v-model="temp.action" />
+        </el-form-item>
+
+        <el-form-item label="Tương Tác" prop="connection" label-width="150px">
           <el-input
             v-model="temp.connection"
             :autosize="{ minRows: 2, maxRows: 4 }"
@@ -190,47 +180,25 @@
           />
         </el-form-item>
 
-        <el-form-item label="Thời Gian" prop="time">
+        <el-form-item label="Thời Gian" prop="time" label-width="150px">
           <!-- <el-date-picker v-model="temp.time" type="datetime" placeholder="Chọn ngày" /> -->
           <el-date-picker v-model="temp.time" placeholder="Chọn ngày" />
         </el-form-item>
 
-        <el-form-item label="Chốt Deal" prop="status">
-          <el-select
-            v-model="temp.status"
-            class="filter-item"
-            placeholder="Tình trạng deal"
-          >
-            <el-option
-              v-for="item in statusOptions"
-              :key="item"
-              :label="item"
-              :value="item"
-            />
+        <el-form-item label="Chốt Deal" prop="status" label-width="150px">
+          <el-select v-model="temp.status" class="filter-item" placeholder="Tình trạng deal">
+            <el-option v-for="item in statusOptions" :key="item" :label="item" :value="item" />
           </el-select>
         </el-form-item>
-
-        <el-form-item label="Loại" prop="category">
-          <el-input v-model="temp.category" />
-        </el-form-item>
-
-        <el-form-item label="Email" prop="email">
-          <el-input v-model="temp.email" />
-        </el-form-item>
-
-        <el-form-item label="Điện Thoại" prop="phone">
-          <el-input v-model="temp.phone" />
-        </el-form-item>
       </el-form>
+
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">Huỷ</el-button>
 
         <el-button
           type="primary"
           @click="dialogStatus === 'create' ? createData() : updateData()"
-        >
-          Xác Nhận
-        </el-button>
+        >Xác Nhận</el-button>
       </div>
     </el-dialog>
 
@@ -261,21 +229,14 @@ import {
 
 import { fillFormObject } from '@/utils/form'
 import waves from '@/directive/waves' // waves directive
-
-const intlDateObj = new Intl.DateTimeFormat('id-ID', {
-  timeZone: 'Asia/Ho_Chi_Minh'
-})
+import { parseHCMDate } from '@/utils/time'
 
 export default {
   name: 'ComplexTable',
   components: {},
   directives: { waves },
   filters: {
-    parseHCMDate(dateString) {
-      const date = Date.parse(dateString)
-      const hcmDate = intlDateObj.format(date)
-      return hcmDate
-    }
+    parseHCMDate
   },
   data() {
     return {

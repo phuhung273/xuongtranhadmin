@@ -1,15 +1,13 @@
 <template>
-  <div v-loading="listLoading" class="app-container">
-    <div v-if="!listLoading" class="components-container board">
-      <Kanban
-        v-for="status in statusOptions"
-        :key="status"
-        :group="group"
-        :header-text="status"
-        class="kanban"
-        :list="getListBasedOnStatus(status)"
-      />
-    </div>
+  <div v-if="!listLoading" class="components-container board">
+    <Kanban
+      v-for="status in statusOptions"
+      :key="status"
+      :group="group"
+      :header-text="status"
+      class="kanban"
+      :list="getListBasedOnStatus(status)"
+    />
   </div>
 </template>
 
@@ -22,6 +20,7 @@
   align-items: flex-start;
   overflow-x: scroll;
   background: #f0f0f0;
+  height: calc(100vh - 110px);
 }
 .kanban {
   padding: 0 10px;
@@ -45,11 +44,7 @@
 
 <script>
 import Kanban from '@/components/Kanban'
-import { fetchCustomerFunnel, updateCustomerFunnel } from '@/api/customer'
-
-const intlDateObj = new Intl.DateTimeFormat('id-ID', {
-  timeZone: 'Asia/Ho_Chi_Minh'
-})
+import { fetchCustomerFunnel } from '@/api/customer'
 
 export default {
   name: 'DragKanbanDemo',
@@ -80,18 +75,28 @@ export default {
     this.getData()
   },
   methods: {
-    async getData() {
+    getData() {
       fetchCustomerFunnel(this.listQuery).then(response => {
         // console.log(response)
-        this.list = response.data.items
+        this.list = this.prepareDraggableList(response.data.items)
         this.listLoading = false
 
-        // console.log(this.list)
+        // console.log(this.list[this.statusOptions[0]])
       })
     },
     getListBasedOnStatus(status) {
-      //   console.log(status)
-      return this.list.filter(customer => customer.status === status)
+      return this.list[status]
+    },
+    prepareDraggableList(items) {
+      const newList = {}
+
+      this.statusOptions.forEach(status => {
+        const statusList = items.filter(item => item.status === status)
+
+        newList[status] = statusList
+      })
+
+      return newList
     }
   }
 }

@@ -159,13 +159,22 @@
           </el-select>
         </el-form-item>
 
+        <el-form-item label="Sản Phẩm" prop="product">
+          <el-input v-model="temp.product" />
+        </el-form-item>
+
+        <el-form-item label="Nội Dung">
+          <el-input
+            v-model="temp.content"
+            :autosize="{ minRows: 2, maxRows: 4 }"
+            type="textarea"
+            placeholder="Nhập nội dung"
+          />
+        </el-form-item>
+
         <el-form-item label="Thời Gian" prop="time">
           <!-- <el-date-picker v-model="temp.time" type="datetime" placeholder="Chọn ngày" /> -->
           <el-date-picker v-model="temp.time" placeholder="Chọn ngày" />
-        </el-form-item>
-
-        <el-form-item label="Sản Phẩm" prop="product">
-          <el-input v-model="temp.product" />
         </el-form-item>
 
         <el-form-item label="Kết Quả" prop="result">
@@ -180,15 +189,6 @@
             style="margin-top:8px;"
           />
         </el-form-item>-->
-
-        <el-form-item label="Nội Dung">
-          <el-input
-            v-model="temp.content"
-            :autosize="{ minRows: 2, maxRows: 4 }"
-            type="textarea"
-            placeholder="Nhập nội dung"
-          />
-        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">Huỷ</el-button>
@@ -235,9 +235,7 @@ import {
 import { fillFormObject } from '@/utils/form'
 import waves from '@/directive/waves' // waves directive
 
-const intlDateObj = new Intl.DateTimeFormat('id-ID', {
-  timeZone: 'Asia/Ho_Chi_Minh'
-})
+import { parseHCMDate } from '@/utils/time'
 
 export default {
   name: 'ComplexTable',
@@ -252,11 +250,7 @@ export default {
       }
       return statusMap[status]
     },
-    parseHCMDate(dateString) {
-      const date = Date.parse(dateString)
-      const hcmDate = intlDateObj.format(date)
-      return hcmDate
-    }
+    parseHCMDate
   },
   data() {
     return {
