@@ -9,13 +9,13 @@
         @keyup.enter.native="handleFilter"
       />-->
       <el-select
-        v-model="listQuery.source"
-        placeholder="Nguồn"
+        v-model="listQuery.lead"
+        placeholder="Loại Lead"
         clearable
         style="width: 140px"
         class="filter-item"
       >
-        <el-option v-for="item in sourceOptions" :key="item" :label="item" :value="item" />
+        <el-option v-for="item in leadOptions" :key="item" :label="item" :value="item" />
       </el-select>
 
       <el-button
@@ -57,7 +57,7 @@
         <template slot-scope="{ row }">
           <!-- <span>{{ row.timestamp | parseTime('{y}-{m}-{d} {h}:{i}') }}</span> -->
           <!-- <span>{{ row.time | parseTime('{y}-{m}-{d} {h}:{i}') }}</span> -->
-          <span>{{ row.time | parseHCMDate }}</span>
+          <span class="link-type" @click="handleUpdate(row)">{{ row.time | parseHCMDate }}</span>
           <!-- <span>{{ row.time }}</span> -->
         </template>
       </el-table-column>
@@ -68,19 +68,19 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="Nguồn" width="150px" align="center">
+      <el-table-column label="Loại Lead" width="150px" align="center">
         <template slot-scope="{ row }">
-          <span>{{ row.source }}</span>
+          <span>{{ row.lead }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column label="Hành động" width="150px" align="center">
+      <el-table-column label="Sản Phẩm" width="150px" align="center">
         <template slot-scope="{ row }">
-          <span>{{ row.action }}</span>
+          <span>{{ row.product }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column label="Nhu Cầu" width="200px" align="center">
+      <el-table-column label="Nhu Cầu Cụ Thể" width="200px" align="center">
         <template slot-scope="{ row }">
           <span>{{ row.demand }}</span>
         </template>
@@ -92,12 +92,8 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="Chốt Deal" class-name="status-col" width="100">
+      <el-table-column label="Chốt Deal" class-name="status-col" width="150px">
         <template slot-scope="{ row }">{{ row.status }}</template>
-      </el-table-column>
-
-      <el-table-column label="Loại" width="150px">
-        <template slot-scope="{ row }">{{ row.category }}</template>
       </el-table-column>
 
       <el-table-column label="Email" width="150px">
@@ -127,7 +123,7 @@
       </el-table-column>
     </el-table>
 
-    <el-dialog
+    <!-- <el-dialog
       v-loading="dialogFormLoading"
       element-loading-background="rgba(0, 0, 0, 0.6)"
       :title="textMap[dialogStatus]"
@@ -138,40 +134,30 @@
         :rules="rules"
         :model="temp"
         label-position="left"
-        label-width="100px"
+        label-width="150px"
         style="width: 400px; margin-left:50px;"
       >
-        <el-form-item label="Khách Hàng" prop="customer" label-width="150px">
+        <el-form-item label="Khách Hàng" prop="customer">
           <el-input v-model="temp.customer" placeholder="Tên khách hàng" />
         </el-form-item>
 
-        <el-form-item label="Nguồn" prop="source" label-width="150px">
-          <el-select v-model="temp.source" class="filter-item" placeholder="Chọn nguồn">
-            <el-option v-for="item in sourceOptions" :key="item" :label="item" :value="item" />
+        <el-form-item label="Loại Lead" prop="lead">
+          <el-select v-model="temp.lead" class="filter-item" placeholder="Chọn loại Lead">
+            <el-option v-for="item in leadOptions" :key="item" :label="item" :value="item" />
           </el-select>
         </el-form-item>
 
-        <el-form-item label="Nhu Cầu" prop="demand" label-width="150px">
+        <el-form-item label="Sản Phẩm" prop="product">
+          <el-select v-model="temp.product" class="filter-item" placeholder="Chọn sản phẩm">
+            <el-option v-for="item in productOptions" :key="item" :label="item" :value="item" />
+          </el-select>
+        </el-form-item>
+
+        <el-form-item label="Nhu Cầu Cụ Thể" prop="demand">
           <el-input v-model="temp.demand" />
         </el-form-item>
 
-        <el-form-item label="Loại" prop="category" label-width="150px">
-          <el-input v-model="temp.category" />
-        </el-form-item>
-
-        <el-form-item label="Email" prop="email" label-width="150px">
-          <el-input v-model="temp.email" />
-        </el-form-item>
-
-        <el-form-item label="Điện Thoại" prop="phone" label-width="150px">
-          <el-input v-model="temp.phone" />
-        </el-form-item>
-
-        <el-form-item label="Hành Động" prop="action" label-width="150px">
-          <el-input v-model="temp.action" />
-        </el-form-item>
-
-        <el-form-item label="Tương Tác" prop="connection" label-width="150px">
+        <el-form-item label="Tương Tác" prop="connection">
           <el-input
             v-model="temp.connection"
             :autosize="{ minRows: 2, maxRows: 4 }"
@@ -180,12 +166,19 @@
           />
         </el-form-item>
 
-        <el-form-item label="Thời Gian" prop="time" label-width="150px">
-          <!-- <el-date-picker v-model="temp.time" type="datetime" placeholder="Chọn ngày" /> -->
+        <el-form-item label="Email" prop="email">
+          <el-input v-model="temp.email" />
+        </el-form-item>
+
+        <el-form-item label="Điện Thoại" prop="phone">
+          <el-input v-model="temp.phone" />
+        </el-form-item>
+
+        <el-form-item label="Thời Gian" prop="time">
           <el-date-picker v-model="temp.time" placeholder="Chọn ngày" />
         </el-form-item>
 
-        <el-form-item label="Chốt Deal" prop="status" label-width="150px">
+        <el-form-item label="Chốt Deal" prop="status">
           <el-select v-model="temp.status" class="filter-item" placeholder="Tình trạng deal">
             <el-option v-for="item in statusOptions" :key="item" :label="item" :value="item" />
           </el-select>
@@ -200,7 +193,7 @@
           @click="dialogStatus === 'create' ? createData() : updateData()"
         >Xác Nhận</el-button>
       </div>
-    </el-dialog>
+    </el-dialog>-->
 
     <el-dialog
       v-loading="dialogDeleteLoading"
@@ -214,6 +207,17 @@
         <el-button type="danger" @click="deleteData()">Xoá</el-button>
       </span>
     </el-dialog>
+
+    <CustomerForm
+      :title="textMap[dialogStatus]"
+      :visible="dialogFormVisible"
+      :loading="dialogFormLoading"
+      :data="temp"
+      :method="dialogStatus"
+      @closeForm="closeForm"
+      @submit="handleSubmit"
+      @beforeSubmit="handleBeforeSubmit"
+    />
   </div>
 </template>
 
@@ -224,19 +228,20 @@ import {
   fetchCustomerList,
   createCustomer,
   updateCustomer,
-  deleteCustomer
+  deleteCustomer,
 } from '@/api/sales'
 
 import { fillFormObject } from '@/utils/form'
 import waves from '@/directive/waves' // waves directive
 import { parseHCMDate } from '@/utils/time'
+import CustomerForm from '@/components/CustomerForm'
 
 export default {
   name: 'ComplexTable',
-  components: {},
+  components: { CustomerForm },
   directives: { waves },
   filters: {
-    parseHCMDate
+    parseHCMDate,
   },
   data() {
     return {
@@ -247,9 +252,10 @@ export default {
       listQuery: {
         page: 1,
         limit: 20,
-        source: undefined
+        lead: undefined,
       },
-      sourceOptions: ['FB Lead', 'Hotline', 'Zalo'],
+      leadOptions: ['Facebook inbox', 'Hotline call', 'Zalo call/inbox'],
+      productOptions: ['Tranh Canvas', 'Tranh vẽ tường'],
       statusOptions: [
         'Hello',
         'Consulting',
@@ -258,61 +264,65 @@ export default {
         '1st Deposit',
         'Production',
         'Fully Payment',
-        'Lost'
+        'Lost',
       ],
       temp: {
         id: undefined,
         customer: undefined,
-        source: undefined,
-        action: undefined,
+        lead: undefined,
         demand: undefined,
         connection: undefined,
         status: undefined,
-        category: undefined,
         email: undefined,
-        phone: undefined
+        phone: undefined,
+        product: undefined,
+        time: undefined,
       },
       dialogFormVisible: false,
+      dialogFormLoading: false,
       dialogStatus: '',
       textMap: {
         update: 'Chỉnh Sửa',
-        create: 'Thêm Khách Hàng'
+        create: 'Thêm Khách Hàng',
       },
       dialogPvVisible: false,
       pvData: [],
       rules: {
-        source: [
-          { required: true, message: 'Vui lòng nhập nguồn', trigger: 'change' }
+        lead: [
+          {
+            required: true,
+            message: 'Vui lòng nhập loại Lead',
+            trigger: 'change',
+          },
         ],
         time: [
           {
             type: 'date',
             required: true,
             message: 'Vui lòng nhập ngày',
-            trigger: 'change'
-          }
+            trigger: 'change',
+          },
         ],
         connection: [
           {
             required: true,
             message: 'Vui lòng nhập tương tác',
-            trigger: 'change'
-          }
+            trigger: 'change',
+          },
         ],
         customer: [
           {
             required: true,
             message: 'Vui lòng nhập khách hàng',
-            trigger: 'change'
-          }
-        ]
+            trigger: 'change',
+          },
+        ],
       },
       downloadLoading: false,
-      dialogFormLoading: false,
       dialogDeleteVisible: false,
       dialogDeleteLoading: false,
       tempDeleteIndex: undefined,
-      tempDeleteId: undefined
+      tempDeleteId: undefined,
     }
   },
   created() {
@@ -324,7 +334,7 @@ export default {
 
       // console.log(this.listQuery)
 
-      fetchCustomerList(this.listQuery).then(response => {
+      fetchCustomerList(this.listQuery).then((response) => {
         // console.log(response)
         this.list = response.data.items
         this.total = response.data.total
@@ -337,79 +347,110 @@ export default {
       this.listQuery.page = 1
       this.getList()
     },
+    openForm() {
+      this.dialogFormVisible = true
+    },
+    closeForm() {
+      this.dialogFormVisible = false
+    },
     resetTemp() {
       this.temp = {
-        source: undefined,
+        id: undefined,
+        customer: undefined,
+        lead: undefined,
+        demand: undefined,
+        connection: undefined,
+        status: undefined,
+        email: undefined,
+        phone: undefined,
         product: undefined,
-        content: undefined,
         time: undefined,
-        result: undefined
+      }
+    },
+    handleBeforeSubmit() {
+      this.dialogFormLoading = true
+    },
+    handleSubmit(newData) {
+      if (this.dialogStatus === 'create') {
+        this.createData(newData)
+      } else if (this.dialogStatus === 'update') {
+        this.updateData()
       }
     },
     handleCreate() {
       this.resetTemp()
       this.dialogStatus = 'create'
-      this.dialogFormVisible = true
-      this.$nextTick(() => {
-        this.$refs['dataForm'].clearValidate()
-      })
+
+      // this.dialogFormVisible = true
+      // this.$nextTick(() => {
+      //   this.$refs['dataForm'].clearValidate()
+      // })
+
+      this.openForm()
     },
-    createData() {
-      this.$refs['dataForm'].validate(valid => {
-        if (valid) {
-          fillFormObject(this.temp)
-          // console.log(this.temp)
-          this.dialogFormLoading = true
+    createData(newData) {
+      // this.$refs['dataForm'].validate((valid) => {
+      //   if (valid) {
+      //     fillFormObject(this.temp)
+      //     // console.log(this.temp)
+      //     this.dialogFormLoading = true
 
-          createCustomer(this.temp).then(() => {
-            this.list.unshift(this.temp)
-            this.dialogFormVisible = false
-            this.dialogFormLoading = false
+      //     createCustomer(this.temp).then(() => {
+      //       this.list.unshift(this.temp)
+      //       this.dialogFormVisible = false
+      //       this.dialogFormLoading = false
 
-            this.$notify({
-              title: 'Thành Công',
-              message: 'Thêm thành công',
-              type: 'success',
-              duration: 2000
-            })
-          })
-        }
-      })
+      //       this.$notify({
+      //         title: 'Thành Công',
+      //         message: 'Thêm thành công',
+      //         type: 'success',
+      //         duration: 2000,
+      //       })
+      //     })
+      //   }
+      // })
+      this.temp = { ...newData }
+      this.list.unshift(this.temp)
+      this.dialogFormVisible = false
+      this.dialogFormLoading = false
     },
     handleUpdate(row) {
       this.temp = Object.assign({}, row) // copy obj
+      console.log(row)
       // this.temp.timestamp = new Date(this.temp.timestamp)
-      this.temp.time = new Date(this.temp.time)
       this.dialogStatus = 'update'
-      this.dialogFormVisible = true
 
-      this.$nextTick(() => {
-        this.$refs['dataForm'].clearValidate()
-      })
+      // this.temp.time = new Date(this.temp.time)
+      // this.dialogFormVisible = true
+      // this.$nextTick(() => {
+      //   this.$refs['dataForm'].clearValidate()
+      // })
+      this.openForm()
     },
     updateData() {
-      this.$refs['dataForm'].validate(valid => {
-        if (valid) {
-          const tempData = Object.assign({}, this.temp)
-
-          fillFormObject(tempData)
-          this.dialogFormLoading = true
-
-          updateCustomer(tempData).then(() => {
-            const index = this.list.findIndex(v => v.id === this.temp.id)
-            this.list.splice(index, 1, this.temp)
-            this.dialogFormLoading = false
-            this.dialogFormVisible = false
-
-            this.$notify({
-              title: 'Thành Công',
-              message: 'Chỉnh sửa thành công',
-              type: 'success',
-              duration: 2000
-            })
-          })
-        }
-      })
+      // this.$refs['dataForm'].validate((valid) => {
+      //   if (valid) {
+      //     const tempData = Object.assign({}, this.temp)
+      //     fillFormObject(tempData)
+      //     this.dialogFormLoading = true
+      //     updateCustomer(tempData).then(() => {
+      //       const index = this.list.findIndex((v) => v.id === this.temp.id)
+      //       this.list.splice(index, 1, this.temp)
+      //       this.dialogFormLoading = false
+      //       this.dialogFormVisible = false
+      //       this.$notify({
+      //         title: 'Thành Công',
+      //         message: 'Chỉnh sửa thành công',
+      //         type: 'success',
+      //         duration: 2000,
+      //       })
+      //     })
+      //   }
+      // })
+      const index = this.list.findIndex((v) => v.id === this.temp.id)
+      this.list.splice(index, 1, this.temp)
+      this.dialogFormLoading = false
+      this.dialogFormVisible = false
     },
     handleDelete(row, index) {
       this.tempDeleteId = row.id
@@ -428,16 +469,16 @@ export default {
           title: 'Thành Công',
           message: 'Xoá thành công',
           type: 'success',
-          duration: 2000
+          duration: 2000,
         })
       })
     },
     handleFetchPv(pv) {
-      fetchPv(pv).then(response => {
+      fetchPv(pv).then((response) => {
         this.pvData = response.data.pvData
         this.dialogPvVisible = true
       })
-    }
-  }
+    },
+  },
 }
 </script>

@@ -57,7 +57,7 @@
         <template slot-scope="{ row }">
           <!-- <span>{{ row.timestamp | parseTime('{y}-{m}-{d} {h}:{i}') }}</span> -->
           <!-- <span>{{ row.time | parseTime('{y}-{m}-{d} {h}:{i}') }}</span> -->
-          <span>{{ row.time | parseHCMDate }}</span>
+          <span class="link-type" @click="handleUpdate(row)">{{ row.time | parseHCMDate }}</span>
           <!-- <span>{{ row.time }}</span> -->
         </template>
       </el-table-column>
@@ -68,9 +68,27 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="Sản Phẩm" width="110px" align="center">
+      <el-table-column label="Sản Phẩm" width="150px" align="center">
         <template slot-scope="{ row }">
           <span>{{ row.product }}</span>
+        </template>
+      </el-table-column>
+
+      <el-table-column label="Loại Lead" width="150px" align="center">
+        <template slot-scope="{ row }">
+          <span>{{ row.lead }}</span>
+        </template>
+      </el-table-column>
+
+      <el-table-column label="Kết Quả" width="80px" align="center">
+        <template slot-scope="{ row }">
+          <!-- <svg-icon
+            v-for="n in + row.importance"
+            :key="n"
+            icon-class="star"
+            class="meta-item__icon"
+          />-->
+          {{ row.result }}
         </template>
       </el-table-column>
 
@@ -90,18 +108,6 @@
           <span style="color:red;">{{ row.reviewer }}</span>
         </template>
       </el-table-column>-->
-
-      <el-table-column label="Kết Quả" width="80px">
-        <template slot-scope="{ row }">
-          <!-- <svg-icon
-            v-for="n in + row.importance"
-            :key="n"
-            icon-class="star"
-            class="meta-item__icon"
-          />-->
-          {{ row.result }}
-        </template>
-      </el-table-column>
 
       <!-- <el-table-column label="Readings" align="center" width="95">
         <template slot-scope="{ row }">
@@ -160,7 +166,24 @@
         </el-form-item>
 
         <el-form-item label="Sản Phẩm" prop="product">
-          <el-input v-model="temp.product" />
+          <el-select v-model="temp.product" class="filter-item" placeholder="Chọn sản phẩm">
+            <el-option v-for="item in productOptions" :key="item" :label="item" :value="item" />
+          </el-select>
+        </el-form-item>
+
+        <el-form-item label="Loại Lead" prop="lead">
+          <el-select v-model="temp.lead" class="filter-item" placeholder="Chọn sản phẩm">
+            <el-option v-for="item in leadOptions" :key="item" :label="item" :value="item" />
+          </el-select>
+        </el-form-item>
+
+        <el-form-item label="Kết Quả" prop="result">
+          <el-input v-model="temp.result" type="number" />
+        </el-form-item>
+
+        <el-form-item label="Thời Gian" prop="time">
+          <!-- <el-date-picker v-model="temp.time" type="datetime" placeholder="Chọn ngày" /> -->
+          <el-date-picker v-model="temp.time" placeholder="Chọn ngày" />
         </el-form-item>
 
         <el-form-item label="Nội Dung">
@@ -170,15 +193,6 @@
             type="textarea"
             placeholder="Nhập nội dung"
           />
-        </el-form-item>
-
-        <el-form-item label="Thời Gian" prop="time">
-          <!-- <el-date-picker v-model="temp.time" type="datetime" placeholder="Chọn ngày" /> -->
-          <el-date-picker v-model="temp.time" placeholder="Chọn ngày" />
-        </el-form-item>
-
-        <el-form-item label="Kết Quả" prop="result">
-          <el-input v-model="temp.result" type="number" />
         </el-form-item>
 
         <!-- <el-form-item label="Imp">
@@ -230,7 +244,7 @@ import {
   fetchMarketingList,
   createMarketingTask,
   updateMarketingTask,
-  deleteMarketingTask
+  deleteMarketingTask,
 } from '@/api/marketing'
 import { fillFormObject } from '@/utils/form'
 import waves from '@/directive/waves' // waves directive
@@ -246,11 +260,11 @@ export default {
       const statusMap = {
         published: 'success',
         draft: 'info',
-        deleted: 'danger'
+        deleted: 'danger',
       }
       return statusMap[status]
     },
-    parseHCMDate
+    parseHCMDate,
   },
   data() {
     return {
@@ -261,50 +275,57 @@ export default {
       listQuery: {
         page: 1,
         limit: 20,
-        source: undefined
+        source: undefined,
       },
-      sourceOptions: ['Facebook', 'SEO', 'SEM'],
+      sourceOptions: ['Facebook', 'SEM'],
+      productOptions: ['Tranh Canvas', 'Tranh vẽ tường'],
+      leadOptions: ['Facebook inbox', 'Call'],
       temp: {
         id: undefined,
         source: undefined,
         product: undefined,
         content: undefined,
         time: undefined,
-        result: undefined
+        result: undefined,
+        lead: undefined,
       },
       dialogFormVisible: false,
       dialogStatus: '',
       textMap: {
         update: 'Chỉnh Sửa',
-        create: 'Thêm Task'
+        create: 'Thêm Task',
       },
       dialogPvVisible: false,
       pvData: [],
       rules: {
         source: [
-          { required: true, message: 'Vui lòng nhập nguồn', trigger: 'change' }
+          { required: true, message: 'Vui lòng nhập nguồn', trigger: 'change' },
         ],
         time: [
           {
             type: 'date',
             required: true,
             message: 'Vui lòng nhập ngày',
-            trigger: 'change'
-          }
+            trigger: 'change',
+          },
         ],
         product: [
-          { required: true, message: 'Vui lòng nhập sản phẩm', trigger: 'blur' }
+          {
+            required: true,
+            message: 'Vui lòng nhập sản phẩm',
+            trigger: 'blur',
+          },
         ],
         result: [
-          { required: true, message: 'Vui lòng nhập số', trigger: 'blur' }
-        ]
+          { required: true, message: 'Vui lòng nhập số', trigger: 'blur' },
+        ],
       },
       downloadLoading: false,
       dialogFormLoading: false,
       dialogDeleteVisible: false,
       dialogDeleteLoading: false,
       tempDeleteIndex: undefined,
-      tempDeleteId: undefined
+      tempDeleteId: undefined,
     }
   },
   created() {
@@ -323,7 +344,7 @@ export default {
       //     }, 1.5 * 1000)
       //   })
 
-      fetchMarketingList(this.listQuery).then(response => {
+      fetchMarketingList(this.listQuery).then((response) => {
         // console.log(response)
         this.list = response.data.items
         this.total = response.data.total
@@ -342,7 +363,8 @@ export default {
         product: undefined,
         content: undefined,
         time: undefined,
-        result: undefined
+        result: undefined,
+        lead: undefined,
       }
     },
     handleCreate() {
@@ -354,7 +376,7 @@ export default {
       })
     },
     createData() {
-      this.$refs['dataForm'].validate(valid => {
+      this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           fillFormObject(this.temp)
           // console.log(this.temp)
@@ -383,7 +405,7 @@ export default {
               title: 'Thành Công',
               message: 'Thêm thành công',
               type: 'success',
-              duration: 2000
+              duration: 2000,
             })
           })
         }
@@ -401,7 +423,7 @@ export default {
       })
     },
     updateData() {
-      this.$refs['dataForm'].validate(valid => {
+      this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           const tempData = Object.assign({}, this.temp)
 
@@ -409,7 +431,7 @@ export default {
           this.dialogFormLoading = true
 
           updateMarketingTask(tempData).then(() => {
-            const index = this.list.findIndex(v => v.id === this.temp.id)
+            const index = this.list.findIndex((v) => v.id === this.temp.id)
             this.list.splice(index, 1, this.temp)
             this.dialogFormLoading = false
             this.dialogFormVisible = false
@@ -418,7 +440,7 @@ export default {
               title: 'Thành Công',
               message: 'Chỉnh sửa thành công',
               type: 'success',
-              duration: 2000
+              duration: 2000,
             })
           })
         }
@@ -441,16 +463,16 @@ export default {
           title: 'Thành Công',
           message: 'Xoá thành công',
           type: 'success',
-          duration: 2000
+          duration: 2000,
         })
       })
     },
     handleFetchPv(pv) {
-      fetchPv(pv).then(response => {
+      fetchPv(pv).then((response) => {
         this.pvData = response.data.pvData
         this.dialogPvVisible = true
       })
-    }
-  }
+    },
+  },
 }
 </script>

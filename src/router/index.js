@@ -68,16 +68,16 @@ export const constantRoutes = [
     },
     children: [
       {
-        path: 'index',
-        component: () => import('@/views/marketing/dashboard'), // Parent router-view
-        name: 'marketing_index',
-        meta: { title: 'Thống kê' }
-      },
-      {
         path: 'manage',
         component: () => import('@/views/marketing/manage'),
         name: 'marketing_manage',
         meta: { title: 'Quản lý task' }
+      },
+      {
+        path: 'index',
+        component: () => import('@/views/marketing/dashboard'), // Parent router-view
+        name: 'marketing_index',
+        meta: { title: 'Thống kê' }
       }
     ]
   },
@@ -93,16 +93,16 @@ export const constantRoutes = [
     },
     children: [
       {
-        path: 'index',
-        component: () => import('@/views/nested/menu1/index'), // Parent router-view
-        name: 'sales_index',
-        meta: { title: 'Thống kê' }
-      },
-      {
         path: 'manage',
         component: () => import('@/views/sales/manage'),
         name: 'sales_manage',
         meta: { title: 'Quản lý Sales' }
+      },
+      {
+        path: 'index',
+        component: () => import('@/views/nested/menu1/index'), // Parent router-view
+        name: 'sales_index',
+        meta: { title: 'Thống kê' }
       }
     ]
   },

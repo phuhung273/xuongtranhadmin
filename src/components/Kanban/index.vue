@@ -9,11 +9,25 @@
       :set-data="setData"
       @change="changeHandle"
     >
-      <div v-for="element in list" :key="element.id" class="board-item">
+      <div
+        v-for="element in list"
+        :key="element.id"
+        :options="{handle:'.drag-this'}"
+        class="board-item"
+      >
         <div class="board-item-customer">{{ element.customer }}</div>
         <div class="board-item-time">Tương tác cuối: {{ element.time | parseHCMDate }}</div>
-        <div class="board-item-staff">
-          <div class="staff-row">
+        <div class="board-item-footer">
+          <div class="action">
+            <el-button
+              type="success"
+              icon="el-icon-edit"
+              size="small"
+              circle
+              @click="handleEdit(element.id)"
+            />
+          </div>
+          <div class="staff-avatar">
             <el-tooltip effect="dark" :content="element.customer" placement="bottom">
               <el-avatar size="medium">{{ element.customer }}</el-avatar>
             </el-tooltip>
@@ -28,33 +42,35 @@
 import draggable from 'vuedraggable'
 import { updateCustomerFunnel } from '@/api/customer'
 import { parseHCMDate } from '@/utils/time'
+import { fetchCustomerFunnel } from '@/api/customer'
 
 export default {
   name: 'DragKanbanDemo',
   components: {
-    draggable
+    draggable,
   },
   filters: {
-    parseHCMDate
+    parseHCMDate,
   },
   props: {
     headerText: {
       type: String,
-      default: 'Header'
+      default: 'Header',
     },
     options: {
       type: Object,
       default() {
         return {}
-      }
+      },
     },
     list: {
       type: Array,
       default() {
         return []
-      }
-    }
+      },
+    },
   },
+
   methods: {
     setData(dataTransfer) {
       // to avoid Firefox bug
@@ -67,12 +83,16 @@ export default {
       if (isElementAdded) {
         const { id } = event.added.element
         const info = { id: id, status: this.headerText }
-        updateCustomerFunnel(info).catch(error => {
+        updateCustomerFunnel(info).catch((error) => {
           console.log(error)
         })
       }
-    }
-  }
+    },
+    handleEdit(id) {
+      // console.log(id)
+      this.$emit('openForm', id)
+    },
+  },
 }
 </script>
 <style lang="scss" scoped>
@@ -80,8 +100,8 @@ export default {
   min-width: 300px;
   min-height: 100px;
   // height: auto;
-  height: 100%;
-  overflow: hidden;
+  // height: 100%;
+  // overflow: hidden;
   background: #f0f0f0;
   border-radius: 3px;
 
@@ -134,8 +154,11 @@ export default {
         font-size: 14px;
       }
 
-      .board-item-staff {
-        .staff-row {
+      .board-item-footer {
+        .action {
+          float: left;
+        }
+        .staff-avatar {
           float: right;
         }
       }

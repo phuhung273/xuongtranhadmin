@@ -8,6 +8,13 @@ export function fetchCustomerFunnel(query) {
   })
 }
 
+export function fetchOneCustomer(id) {
+  return request({
+    url: '/customer/list/' + id,
+    method: 'get'
+  })
+}
+
 export function updateCustomerFunnel(data) {
   return request({
     url: '/customer/update',
