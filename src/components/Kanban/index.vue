@@ -138,6 +138,7 @@ export default {
       padding: 5px 10px;
       box-sizing: border-box;
       box-shadow: 0px 1px 3px 0 rgba(0, 0, 0, 0.2);
+      border-radius: 7px;
 
       .board-item-customer,
       .board-item-time {

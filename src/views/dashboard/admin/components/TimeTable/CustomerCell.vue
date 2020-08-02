@@ -1,8 +1,7 @@
 <template>
   <div class="inner-cell">
-    <ul v-for="product in list" :key="product.name">
-      <div>{{ product.name }}</div>
-      <li v-for="lead in product.lead" :key="lead.name">{{ lead.name }}: {{ lead.result }}</li>
+    <ul>
+      <li v-for="status in list" :key="status.name">{{ status.name }}: {{ status.quantity }}</li>
     </ul>
   </div>
 </template>
@@ -30,21 +29,12 @@ export default {
     parseData() {
       //   console.log(this.data)
       const newList = []
-      for (const product in this.data) {
-        const newProduct = { name: product, lead: [] }
-
-        for (const lead in this.data[product]) {
-          const newLead = {
-            name: lead,
-            result: this.data[product][lead],
-          }
-          newProduct.lead.push(newLead)
-        }
-        newList.push(newProduct)
+      for (const status in this.data) {
+        const newSource = { name: status, quantity: this.data[status] }
+        newList.push(newSource)
       }
 
       this.list = newList
-      // console.log(newList)
     },
   },
 }

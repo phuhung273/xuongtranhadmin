@@ -178,7 +178,8 @@
         </el-form-item>
 
         <el-form-item label="Kết Quả" prop="result">
-          <el-input v-model="temp.result" type="number" />
+          <!-- <el-input v-model="temp.result" type="number" /> -->
+          <el-input-number v-model="temp.result" />
         </el-form-item>
 
         <el-form-item label="Thời Gian" prop="time">

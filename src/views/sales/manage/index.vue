@@ -416,7 +416,7 @@ export default {
     },
     handleUpdate(row) {
       this.temp = Object.assign({}, row) // copy obj
-      console.log(row)
+      // console.log(row)
       // this.temp.timestamp = new Date(this.temp.timestamp)
       this.dialogStatus = 'update'
 
