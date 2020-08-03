@@ -93,6 +93,7 @@
 import { createCustomer, updateCustomer } from '@/api/sales'
 import { fillFormObject } from '@/utils/form'
 import { parseHCMDate } from '@/utils/time'
+import { salesLeadOptions, productOptions, statusOptions } from '@/settings'
 
 export default {
   name: 'CustomerForm',
@@ -123,18 +124,21 @@ export default {
   },
   data() {
     return {
-      leadOptions: ['Facebook inbox', 'Hotline call', 'Zalo call/inbox'],
-      productOptions: ['Tranh Canvas', 'Tranh vẽ tường'],
-      statusOptions: [
-        'Hello',
-        'Consulting',
-        'Design Pick-up',
-        'Contract Sent',
-        '1st Deposit',
-        'Production',
-        'Fully Payment',
-        'Lost',
-      ],
+      // leadOptions: ['Facebook inbox', 'Hotline call', 'Zalo call/inbox'],
+      // productOptions: ['Tranh Canvas', 'Tranh vẽ tường'],
+      // statusOptions: [
+      //   'Hello',
+      //   'Consulting',
+      //   'Design Pick-up',
+      //   'Contract Sent',
+      //   '1st Deposit',
+      //   'Production',
+      //   'Fully Payment',
+      //   'Lost',
+      // ],
+      leadOptions: salesLeadOptions,
+      productOptions: productOptions,
+      statusOptions: statusOptions,
       rules: {
         lead: [
           {

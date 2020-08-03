@@ -58,51 +58,51 @@ export const constantRoutes = [
   },
 
   {
-    path: '/marketing',
+    path: '/manage',
     component: Layout,
-    redirect: '/marketing/index',
-    name: 'Marketing',
+    redirect: '/manage/index',
+    name: 'Quản Lý',
     meta: {
-      title: 'Marketing',
-      icon: 'el-icon-s-marketing'
+      title: 'Quản Lý',
+      icon: 'el-icon-s-order'
     },
     children: [
       {
-        path: 'manage',
+        path: 'marketing',
         component: () => import('@/views/marketing/manage'),
         name: 'marketing_manage',
-        meta: { title: 'Quản lý task' }
+        meta: { title: 'Quản lý marketing' }
       },
       {
-        path: 'index',
-        component: () => import('@/views/marketing/dashboard'), // Parent router-view
-        name: 'marketing_index',
-        meta: { title: 'Thống kê' }
+        path: 'sales',
+        component: () => import('@/views/sales/manage'),
+        name: 'sales_manage',
+        meta: { title: 'Quản lý sales' }
       }
     ]
   },
 
   {
-    path: '/sales',
+    path: '/statistics',
     component: Layout,
-    redirect: '/sales/index',
-    name: 'Sales',
+    redirect: '/statistics/index',
+    name: 'Thống Kê',
     meta: {
-      title: 'Sales',
-      icon: 'el-icon-s-shop'
+      title: 'Thống Kê',
+      icon: 'chart'
     },
     children: [
       {
-        path: 'manage',
-        component: () => import('@/views/sales/manage'),
-        name: 'sales_manage',
-        meta: { title: 'Quản lý Sales' }
+        path: 'marketing',
+        component: () => import('@/views/marketing/dashboard'), // Parent router-view
+        name: 'marketing_statistics',
+        meta: { title: 'Thống kê marketing' }
       },
       {
-        path: 'index',
+        path: 'sales',
         component: () => import('@/views/nested/menu1/index'), // Parent router-view
-        name: 'sales_index',
-        meta: { title: 'Thống kê' }
+        name: 'sales_statistics',
+        meta: { title: 'Thống kê sales' }
       }
     ]
   },

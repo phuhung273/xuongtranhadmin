@@ -251,6 +251,11 @@ import { fillFormObject } from '@/utils/form'
 import waves from '@/directive/waves' // waves directive
 
 import { parseHCMDate } from '@/utils/time'
+import {
+  marketingLeadOptions,
+  marketingSourceOptions,
+  productOptions,
+} from '@/settings'
 
 export default {
   name: 'ComplexTable',
@@ -278,9 +283,12 @@ export default {
         limit: 20,
         source: undefined,
       },
-      sourceOptions: ['Facebook', 'SEM'],
-      productOptions: ['Tranh Canvas', 'Tranh vẽ tường'],
-      leadOptions: ['Facebook inbox', 'Call'],
+      // sourceOptions: ['Facebook', 'SEM'],
+      // productOptions: ['Tranh Canvas', 'Tranh vẽ tường'],
+      // leadOptions: ['Facebook inbox', 'Call'],
+      sourceOptions: marketingSourceOptions,
+      leadOptions: marketingLeadOptions,
+      productOptions: productOptions,
       temp: {
         id: undefined,
         source: undefined,

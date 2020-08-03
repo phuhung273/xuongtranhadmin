@@ -11,5 +11,55 @@ module.exports = {
    * @type {boolean} true | false
    * @description Whether show the logo in sidebar
    */
-  sidebarLogo: false
+  sidebarLogo: false,
+
+  /**
+   * @type {Array}
+   * @description Example: ['Tranh Canvas', 'Tranh vẽ tường']
+   */
+  productOptions: ['Tranh Canvas', 'Tranh vẽ tường'],
+
+  /**
+   * @type {Array}
+   * @description Example: ['Facebook inbox', 'Hotline call', 'Zalo call/inbox']
+   */
+  salesLeadOptions: ['Facebook inbox', 'Hotline call', 'Zalo call/inbox'],
+
+  /**
+   * @type {Array}
+   * @description Example: ['Facebook inbox', 'Call']
+   */
+  marketingLeadOptions: ['Facebook inbox', 'Call'],
+
+  /**
+   * @type {Array}
+   * @description Example: ['Facebook', 'SEM']
+   */
+  marketingSourceOptions: ['Facebook', 'SEM'],
+
+  /**
+   * @type {Array}
+   * @description 
+   * Example: 
+   * [
+    'Hello',
+    'Consulting',
+    'Design Pick-up',
+    'Contract Sent',
+    '1st Deposit',
+    'Production',
+    'Fully Payment',
+    'Lost',
+  ]
+   */
+  statusOptions: [
+    'Hello',
+    'Consulting',
+    'Design Pick-up',
+    'Contract Sent',
+    '1st Deposit',
+    'Production',
+    'Fully Payment',
+    'Lost'
+  ]
 }

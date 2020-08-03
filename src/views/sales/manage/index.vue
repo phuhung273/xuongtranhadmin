@@ -123,78 +123,6 @@
       </el-table-column>
     </el-table>
 
-    <!-- <el-dialog
-      v-loading="dialogFormLoading"
-      element-loading-background="rgba(0, 0, 0, 0.6)"
-      :title="textMap[dialogStatus]"
-      :visible.sync="dialogFormVisible"
-    >
-      <el-form
-        ref="dataForm"
-        :rules="rules"
-        :model="temp"
-        label-position="left"
-        label-width="150px"
-        style="width: 400px; margin-left:50px;"
-      >
-        <el-form-item label="Khách Hàng" prop="customer">
-          <el-input v-model="temp.customer" placeholder="Tên khách hàng" />
-        </el-form-item>
-
-        <el-form-item label="Loại Lead" prop="lead">
-          <el-select v-model="temp.lead" class="filter-item" placeholder="Chọn loại Lead">
-            <el-option v-for="item in leadOptions" :key="item" :label="item" :value="item" />
-          </el-select>
-        </el-form-item>
-
-        <el-form-item label="Sản Phẩm" prop="product">
-          <el-select v-model="temp.product" class="filter-item" placeholder="Chọn sản phẩm">
-            <el-option v-for="item in productOptions" :key="item" :label="item" :value="item" />
-          </el-select>
-        </el-form-item>
-
-        <el-form-item label="Nhu Cầu Cụ Thể" prop="demand">
-          <el-input v-model="temp.demand" />
-        </el-form-item>
-
-        <el-form-item label="Tương Tác" prop="connection">
-          <el-input
-            v-model="temp.connection"
-            :autosize="{ minRows: 2, maxRows: 4 }"
-            type="textarea"
-            placeholder="Nội dung tương tác"
-          />
-        </el-form-item>
-
-        <el-form-item label="Email" prop="email">
-          <el-input v-model="temp.email" />
-        </el-form-item>
-
-        <el-form-item label="Điện Thoại" prop="phone">
-          <el-input v-model="temp.phone" />
-        </el-form-item>
-
-        <el-form-item label="Thời Gian" prop="time">
-          <el-date-picker v-model="temp.time" placeholder="Chọn ngày" />
-        </el-form-item>
-
-        <el-form-item label="Chốt Deal" prop="status">
-          <el-select v-model="temp.status" class="filter-item" placeholder="Tình trạng deal">
-            <el-option v-for="item in statusOptions" :key="item" :label="item" :value="item" />
-          </el-select>
-        </el-form-item>
-      </el-form>
-
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">Huỷ</el-button>
-
-        <el-button
-          type="primary"
-          @click="dialogStatus === 'create' ? createData() : updateData()"
-        >Xác Nhận</el-button>
-      </div>
-    </el-dialog>-->
-
     <el-dialog
       v-loading="dialogDeleteLoading"
       title="Xác Nhận Xoá"
@@ -235,6 +163,7 @@ import { fillFormObject } from '@/utils/form'
 import waves from '@/directive/waves' // waves directive
 import { parseHCMDate } from '@/utils/time'
 import CustomerForm from '@/components/CustomerForm'
+import { salesLeadOptions, productOptions } from '@/settings'
 
 export default {
   name: 'ComplexTable',
@@ -254,8 +183,10 @@ export default {
         limit: 20,
         lead: undefined,
       },
-      leadOptions: ['Facebook inbox', 'Hotline call', 'Zalo call/inbox'],
-      productOptions: ['Tranh Canvas', 'Tranh vẽ tường'],
+      // leadOptions: ['Facebook inbox', 'Hotline call', 'Zalo call/inbox'],
+      // productOptions: ['Tranh Canvas', 'Tranh vẽ tường'],
+      leadOptions: salesLeadOptions,
+      productOptions: productOptions,
       statusOptions: [
         'Hello',
         'Consulting',

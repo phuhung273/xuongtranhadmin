@@ -1,16 +1,5 @@
 <template>
   <el-table :data="tableData" style="width: 100%">
-    <!-- <el-table-column label="Tranh Canvas" align="center">
-      <el-table-column label="Inbox" align="center">
-          <span>{{ row['Tranh Canvas']['Facebook inbox'] }}</span>
-        </el-table-column>
-        <el-table-column label="Hotline" align="center">
-          <span>{{ row['Tranh Canvas']['Hotline call'] }}</span>
-        </el-table-column>
-        <el-table-column label="Zalo" align="center">
-          <span>{{ row['Tranh Canvas']['Zalo inbox/call'] }}</span>
-      </el-table-column>
-    </el-table-column>-->
     <el-table-column
       v-for="product in productOptions"
       :key="product"
@@ -28,6 +17,8 @@
 </template>
 
 <script>
+import { salesLeadOptions, productOptions } from '@/settings'
+
 export default {
   props: {
     data: {
@@ -40,8 +31,10 @@ export default {
   data() {
     return {
       tableData: [],
-      productOptions: ['Tranh Canvas', 'Tranh vẽ tường'],
-      leadOptions: ['Facebook inbox', 'Hotline call', 'Zalo call/inbox'],
+      // productOptions: ['Tranh Canvas', 'Tranh vẽ tường'],
+      // leadOptions: ['Facebook inbox', 'Hotline call', 'Zalo call/inbox'],
+      productOptions: productOptions,
+      leadOptions: salesLeadOptions,
     }
   },
   created() {
