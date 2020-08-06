@@ -85,26 +85,16 @@ import { fetchMarketingList, fetchSalesList } from '@/api/dashboard'
 
 import waves from '@/directive/waves' // waves directive
 
-import { marketingLeadOptions, salesLeadOptions } from '@/settings'
+import {
+  marketingLeadOptions,
+  salesLeadOptions,
+  productOptions,
+} from '@/settings'
 
-// const lineChartData = {
-//   newVisitis: {
-//     expectedData: [100, 120, 161, 134, 105, 160, 165],
-//     actualData: [120, 82, 91, 154, 162, 140, 145],
-//   },
-//   messages: {
-//     expectedData: [200, 192, 120, 144, 160, 130, 140],
-//     actualData: [180, 160, 151, 106, 145, 150, 130],
-//   },
-//   purchases: {
-//     expectedData: [80, 100, 121, 104, 105, 90, 100],
-//     actualData: [120, 90, 100, 138, 142, 130, 130],
-//   },
-//   shoppings: {
-//     expectedData: [130, 140, 141, 142, 145, 150, 160],
-//     actualData: [120, 82, 91, 154, 162, 140, 130],
-//   },
-// }
+const organicMap = {
+  'Facebook inbox': 'Facebook inbox',
+  'Hotline call': 'Call',
+}
 
 export default {
   name: 'DashboardAdmin',
@@ -226,10 +216,13 @@ export default {
         const marketingResult = this.summarizeMarketing(marketing)
         const customerResult = this.summarizeCustomer(sales)
         const salesResult = this.summarizeSales(sales)
+        const detailtResult = this.summarizeDetails(sales, marketingResult)
+
         newList.push({
           marketing: marketingResult,
           customer: customerResult,
           sales: salesResult,
+          detail: detailtResult,
           time: time,
         })
       }
@@ -267,6 +260,135 @@ export default {
         }
         salesResult[uniqueProduct] = tempResult
       }
+
+      return salesResult
+    },
+    summarizeDetails(sales, marketing) {
+      const distinctSalesProduct = new Set(sales.map((x) => x.product))
+      const salesResult = {}
+
+      // console.log(marketing)
+
+      for (const uniqueProduct of distinctSalesProduct) {
+        const tempResult = {}
+        for (const { product, lead, status } of sales) {
+          if (product === uniqueProduct) {
+            tempResult[lead] = tempResult[lead] ? tempResult[lead] : {}
+
+            tempResult[lead].result = tempResult[lead].result
+              ? tempResult[lead].result + 1
+              : 1
+
+            tempResult[lead].status = tempResult[lead].status
+              ? tempResult[lead].status
+              : {}
+            tempResult[lead].status[status] = tempResult[lead].status[status]
+              ? tempResult[lead].status[status] + 1
+              : 1
+          }
+        }
+        salesResult[uniqueProduct] = tempResult
+      }
+
+      // for (const uniqueProduct of distinctSalesProduct) {
+      for (const uniqueProduct of productOptions) {
+        const tempSalesProduct = salesResult[uniqueProduct]
+
+        if (tempSalesProduct !== undefined) {
+          const tempMarketingProduct = marketing[uniqueProduct]
+
+          if (tempMarketingProduct !== undefined) {
+            salesLeadOptions.forEach((lead) => {
+              const salesLeadResult = tempSalesProduct[lead]
+
+              if (salesLeadResult !== undefined) {
+                const salesLeadNumericResult = tempSalesProduct[lead].result
+                const equivalentMarketingLead = organicMap[lead]
+                const equivalentMarketingResult = tempMarketingProduct[
+                  equivalentMarketingLead
+                ]
+                  ? tempMarketingProduct[equivalentMarketingLead]
+                  : 0
+
+                // console.log(equivalentMarketingResult)
+
+                if (salesLeadNumericResult < equivalentMarketingResult) {
+                  salesResult[uniqueProduct][lead][
+                    'Non-organic'
+                  ] = salesLeadNumericResult
+
+                  salesResult[uniqueProduct][lead]['Organic'] = 0
+
+                  salesResult[uniqueProduct][lead]['Lost'] =
+                    equivalentMarketingResult - salesLeadNumericResult
+                } else if (salesLeadNumericResult > equivalentMarketingResult) {
+                  salesResult[uniqueProduct][lead][
+                    'Non-organic'
+                  ] = equivalentMarketingResult
+
+                  salesResult[uniqueProduct][lead]['Organic'] =
+                    salesLeadNumericResult - equivalentMarketingResult
+
+                  salesResult[uniqueProduct][lead]['Lost'] = 0
+                }
+              } else {
+                const equivalentMarketingLead = organicMap[lead]
+                const equivalentMarketingResult = tempMarketingProduct[
+                  equivalentMarketingLead
+                ]
+                  ? tempMarketingProduct[equivalentMarketingLead]
+                  : 0
+
+                salesResult[uniqueProduct][lead] = {}
+
+                salesResult[uniqueProduct][lead]['Non-organic'] = 0
+                salesResult[uniqueProduct][lead]['Organic'] = 0
+                salesResult[uniqueProduct][lead][
+                  'Lost'
+                ] = equivalentMarketingResult
+              }
+            })
+          } else {
+            salesLeadOptions.forEach((lead) => {
+              const salesLeadResult = tempSalesProduct[lead]
+
+              if (salesLeadResult !== undefined) {
+                salesResult[uniqueProduct][lead]['Non-organic'] = 0
+                salesResult[uniqueProduct][lead]['Organic'] =
+                  salesLeadResult.result
+                salesResult[uniqueProduct][lead]['Lost'] = 0
+              }
+            })
+          }
+        } else {
+          const tempMarketingProduct = marketing[uniqueProduct]
+
+          if (tempMarketingProduct !== undefined) {
+            salesResult[uniqueProduct] = {}
+            salesLeadOptions.forEach((lead) => {
+              const equivalentMarketingLead = organicMap[lead]
+
+              // console.log(equivalentMarketingLead)
+
+              const equivalentMarketingResult =
+                tempMarketingProduct[equivalentMarketingLead]
+
+              // console.log(equivalentMarketingResult)
+
+              if (equivalentMarketingResult !== undefined) {
+                salesResult[uniqueProduct][lead] = {}
+                salesResult[uniqueProduct][lead]['Non-organic'] = 0
+                salesResult[uniqueProduct][lead]['Organic'] = 0
+                salesResult[uniqueProduct][lead][
+                  'Lost'
+                ] = equivalentMarketingResult
+              }
+            })
+          }
+        }
+      }
+
+      // console.log(salesResult)
 
       return salesResult
     },

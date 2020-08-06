@@ -93,16 +93,16 @@ export const constantRoutes = [
     },
     children: [
       {
-        path: 'marketing',
-        component: () => import('@/views/marketing/dashboard'), // Parent router-view
-        name: 'marketing_statistics',
-        meta: { title: 'Thống kê marketing' }
+        path: 'table',
+        component: () => import('@/views/nested/menu2'), // Parent router-view
+        name: 'table_statistics',
+        meta: { title: 'Thống kê bảng' }
       },
       {
-        path: 'sales',
-        component: () => import('@/views/nested/menu1/index'), // Parent router-view
-        name: 'sales_statistics',
-        meta: { title: 'Thống kê sales' }
+        path: 'chart',
+        component: () => import('@/views/sales/dashboard'), // Parent router-view
+        name: 'chart_statistics',
+        meta: { title: 'Thống kê biểu đồ' }
       }
     ]
   },

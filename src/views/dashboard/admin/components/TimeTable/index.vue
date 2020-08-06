@@ -3,6 +3,7 @@
     ref="list"
     v-loading="loading"
     :data="list"
+    :default-sort="{prop: 'time', order: 'descending'}"
     height="500"
     stripe
     style="width: 100%"
@@ -11,22 +12,27 @@
   >
     <el-table-column type="expand">
       <template slot-scope="{ row }">
-        <expand-panel :data="row.sales" />
+        <expand-panel :data="row.detail" />
       </template>
     </el-table-column>
-    <el-table-column label="Ngày" width="180">
+
+    <!-- <el-table-column label="Ngày" width="180">
       <template slot-scope="{ row }">{{ row.time | parseHCMDate }}</template>
-    </el-table-column>
+    </el-table-column>-->
+    <el-table-column label="Ngày" sortable width="180" prop="time" :formatter="timeFormatter" />
+
     <el-table-column label="Marketing">
       <template slot-scope="{ row }">
         <marketing-cell :data="row.marketing" />
       </template>
     </el-table-column>
+
     <el-table-column label="Sales">
       <template slot-scope="{ row }">
         <sales-cell :data="row.sales" />
       </template>
     </el-table-column>
+
     <el-table-column label="Khách Hàng">
       <template slot-scope="{ row }">
         <customer-cell :data="row.customer" />
@@ -67,6 +73,9 @@ export default {
   methods: {
     rowClicked(row) {
       this.$refs.list.toggleRowExpansion(row)
+    },
+    timeFormatter(row, col, value, index) {
+      return parseHCMDate(value)
     },
   },
 }

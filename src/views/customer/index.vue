@@ -8,6 +8,7 @@
       class="kanban"
       :list="getListBasedOnStatus(status.name)"
       @openForm="openForm"
+      @updateColumn="handleModifiedTimeUpdate"
     />
 
     <CustomerForm
@@ -15,6 +16,7 @@
       :visible="dialogFormVisible"
       :loading="dialogFormLoading"
       :data="temp"
+      :temp-status="tempStatus"
       method="update"
       @closeForm="closeForm"
       @submit="handleSubmit"
@@ -120,6 +122,7 @@ export default {
         phone: undefined,
         product: undefined,
         time: undefined,
+        modified_time: undefined,
       },
       tempStatus: undefined,
     }
@@ -183,15 +186,17 @@ export default {
         phone: undefined,
         product: undefined,
         time: undefined,
+        modified_time: undefined,
       }
     },
     handleBeforeSubmit() {
       this.dialogFormLoading = true
     },
-    handleSubmit() {
+    handleSubmit(submitItem) {
       // console.log(this.temp)
       // console.log(this.list)
       // console.log(this.statusObjects)
+      console.log(submitItem)
 
       const newList = { ...this.list }
       if (this.temp.status === this.tempStatus) {
@@ -209,6 +214,9 @@ export default {
         // console.log(newList)
 
         const newStatusList = [...this.list[this.temp.status]]
+
+        const { newItem } = submitItem
+        this.temp.modified_time = newItem.modified_time
         newStatusList.unshift(this.temp)
         newList[this.temp.status] = newStatusList
       }
@@ -217,12 +225,52 @@ export default {
       // console.log(this.tempStatus)
       this.list = { ...newList }
 
+      // // Change key to rerender
+      // const newStatusObjects = this.statusObjects.map((status) => {
+      //   if (
+      //     status.name === this.temp.status ||
+      //     status.name === this.tempStatus
+      //   ) {
+      //     return {
+      //       name: status.name,
+      //       componentKey: status.componentKey + 1,
+      //     }
+      //   }
+
+      //   return status
+      // })
+
+      // this.statusObjects = [...newStatusObjects]
+
+      this.reRenderStatuses([this.tempStatus, this.temp.status])
+
+      this.dialogFormVisible = false
+      this.dialogFormLoading = false
+      // this.list = { ...this.list }
+    },
+    handleModifiedTimeUpdate({ listName, newItem }) {
+      console.log(newItem)
+      console.log(listName)
+
+      const { id, modified_time } = newItem
+      const modifiedList = this.list[listName].map((item) => {
+        if (item.id === id) {
+          const newItem = { ...item }
+          newItem.modified_time = modified_time
+          return newItem
+        }
+
+        return item
+      })
+
+      this.list[listName] = modifiedList
+
+      this.reRenderStatus(listName)
+    },
+    reRenderStatus(statusName) {
       // Change key to rerender
       const newStatusObjects = this.statusObjects.map((status) => {
-        if (
-          status.name === this.temp.status ||
-          status.name === this.tempStatus
-        ) {
+        if (status.name === statusName) {
           return {
             name: status.name,
             componentKey: status.componentKey + 1,
@@ -234,9 +282,11 @@ export default {
 
       this.statusObjects = [...newStatusObjects]
       // console.log(this.statusObjects)
-      this.dialogFormVisible = false
-      this.dialogFormLoading = false
-      // this.list = { ...this.list }
+    },
+    reRenderStatuses(statusList) {
+      statusList.forEach((status) => {
+        this.reRenderStatus(status)
+      })
     },
   },
 }

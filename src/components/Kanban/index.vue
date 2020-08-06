@@ -12,11 +12,11 @@
       <div
         v-for="element in list"
         :key="element.id"
-        :options="{handle:'.drag-this'}"
+        :options="{ handle: '.drag-this' }"
         class="board-item"
       >
         <div class="board-item-customer">{{ element.customer }}</div>
-        <div class="board-item-time">Tương tác cuối: {{ element.time | parseHCMDate }}</div>
+        <div class="board-item-time">Tương tác cuối: {{ element.modified_time | parseHCMDate }}</div>
         <div class="board-item-footer">
           <div class="action">
             <el-button
@@ -42,7 +42,6 @@
 import draggable from 'vuedraggable'
 import { updateCustomerFunnel } from '@/api/customer'
 import { parseHCMDate } from '@/utils/time'
-import { fetchCustomerFunnel } from '@/api/customer'
 
 export default {
   name: 'DragKanbanDemo',
@@ -82,10 +81,26 @@ export default {
 
       if (isElementAdded) {
         const { id } = event.added.element
-        const info = { id: id, status: this.headerText }
-        updateCustomerFunnel(info).catch((error) => {
-          console.log(error)
-        })
+        const modified_time = new Date().toISOString()
+
+        const info = {
+          id,
+          status: this.headerText,
+          modified_time,
+        }
+
+        // console.log(info)
+        // console.log(this.headerText)
+        updateCustomerFunnel(info)
+          .then(() => {
+            this.$emit('updateColumn', {
+              listName: this.headerText,
+              newItem: info,
+            })
+          })
+          .catch((error) => {
+            console.log(error)
+          })
       }
     },
     handleEdit(id) {
@@ -100,7 +115,7 @@ export default {
   min-width: 300px;
   min-height: 100px;
   // height: auto;
-  // height: 100%;
+  height: 100%;
   // overflow: hidden;
   background: #f0f0f0;
   border-radius: 3px;

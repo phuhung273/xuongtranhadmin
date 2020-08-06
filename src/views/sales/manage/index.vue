@@ -48,61 +48,61 @@
       :key="tableKey"
       v-loading="listLoading"
       :data="list"
+      :default-sort="{prop: 'time', order: 'descending'}"
       border
       fit
       highlight-current-row
       style="width: 100%;"
     >
-      <el-table-column label="Ngày" width="150px" align="center">
-        <template slot-scope="{ row }">
-          <!-- <span>{{ row.timestamp | parseTime('{y}-{m}-{d} {h}:{i}') }}</span> -->
-          <!-- <span>{{ row.time | parseTime('{y}-{m}-{d} {h}:{i}') }}</span> -->
-          <span class="link-type" @click="handleUpdate(row)">{{ row.time | parseHCMDate }}</span>
-          <!-- <span>{{ row.time }}</span> -->
-        </template>
-      </el-table-column>
+      <el-table-column
+        label="Ngày Bắt Đầu"
+        sortable
+        width="150px"
+        align="center"
+        prop="time"
+        :formatter="timeFormatter"
+      />
 
       <el-table-column label="Khách Hàng" width="200px">
         <template slot-scope="{ row }">
-          <span>{{ row.customer }}</span>
+          <span class="link-type" @click="handleUpdate(row)">{{ row.customer }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column label="Loại Lead" width="150px" align="center">
-        <template slot-scope="{ row }">
-          <span>{{ row.lead }}</span>
-        </template>
-      </el-table-column>
+      <el-table-column
+        label="Loại Lead"
+        width="150px"
+        align="center"
+        prop="lead"
+        :filters="getFilters(leadOptions)"
+        :filter-method="handleTableFilter"
+      />
 
-      <el-table-column label="Sản Phẩm" width="150px" align="center">
-        <template slot-scope="{ row }">
-          <span>{{ row.product }}</span>
-        </template>
-      </el-table-column>
+      <el-table-column
+        label="Sản Phẩm"
+        width="150px"
+        align="center"
+        prop="product"
+        :filters="getFilters(productOptions)"
+        :filter-method="handleTableFilter"
+      />
 
-      <el-table-column label="Nhu Cầu Cụ Thể" width="200px" align="center">
-        <template slot-scope="{ row }">
-          <span>{{ row.demand }}</span>
-        </template>
-      </el-table-column>
+      <el-table-column label="Nhu Cầu Cụ Thể" width="200px" align="center" prop="demand" />
 
-      <el-table-column label="Tương Tác" width="300px" align="center">
-        <template slot-scope="{ row }">
-          <span>{{ row.connection }}</span>
-        </template>
-      </el-table-column>
+      <el-table-column label="Tương Tác" width="300px" align="center" prop="connection" />
 
-      <el-table-column label="Chốt Deal" class-name="status-col" width="150px">
-        <template slot-scope="{ row }">{{ row.status }}</template>
-      </el-table-column>
+      <el-table-column
+        label="Chốt Deal"
+        class-name="status-col"
+        width="150px"
+        prop="status"
+        :filters="getFilters(statusOptions)"
+        :filter-method="handleTableFilter"
+      />
 
-      <el-table-column label="Email" width="150px">
-        <template slot-scope="{ row }">{{ row.email }}</template>
-      </el-table-column>
+      <el-table-column label="Email" width="150px" prop="email" />
 
-      <el-table-column label="Điện Thoại" width="150px">
-        <template slot-scope="{ row }">{{ row.phone }}</template>
-      </el-table-column>
+      <el-table-column label="Điện Thoại" width="150px" prop="phone" />
 
       <el-table-column
         label="Chỉnh Sửa"
@@ -141,6 +141,7 @@
       :visible="dialogFormVisible"
       :loading="dialogFormLoading"
       :data="temp"
+      :temp-status="tempStatus"
       :method="dialogStatus"
       @closeForm="closeForm"
       @submit="handleSubmit"
@@ -163,7 +164,7 @@ import { fillFormObject } from '@/utils/form'
 import waves from '@/directive/waves' // waves directive
 import { parseHCMDate } from '@/utils/time'
 import CustomerForm from '@/components/CustomerForm'
-import { salesLeadOptions, productOptions } from '@/settings'
+import { salesLeadOptions, productOptions, statusOptions } from '@/settings'
 
 export default {
   name: 'ComplexTable',
@@ -175,7 +176,7 @@ export default {
   data() {
     return {
       tableKey: 0,
-      list: null,
+      list: [],
       total: 0,
       listLoading: true,
       listQuery: {
@@ -187,16 +188,7 @@ export default {
       // productOptions: ['Tranh Canvas', 'Tranh vẽ tường'],
       leadOptions: salesLeadOptions,
       productOptions: productOptions,
-      statusOptions: [
-        'Hello',
-        'Consulting',
-        'Design Pick-up',
-        'Contract Sent',
-        '1st Deposit',
-        'Production',
-        'Fully Payment',
-        'Lost',
-      ],
+      statusOptions: statusOptions,
       temp: {
         id: undefined,
         customer: undefined,
@@ -208,6 +200,7 @@ export default {
         phone: undefined,
         product: undefined,
         time: undefined,
+        modified_time: undefined,
       },
       dialogFormVisible: false,
       dialogFormLoading: false,
@@ -254,6 +247,7 @@ export default {
       dialogDeleteLoading: false,
       tempDeleteIndex: undefined,
       tempDeleteId: undefined,
+      tempStatus: undefined,
     }
   },
   created() {
@@ -296,6 +290,7 @@ export default {
         phone: undefined,
         product: undefined,
         time: undefined,
+        modified_time: undefined,
       }
     },
     handleBeforeSubmit() {
@@ -356,6 +351,8 @@ export default {
       // this.$nextTick(() => {
       //   this.$refs['dataForm'].clearValidate()
       // })
+
+      this.tempStatus = this.temp.status
       this.openForm()
     },
     updateData() {
@@ -403,6 +400,21 @@ export default {
           duration: 2000,
         })
       })
+    },
+    timeFormatter(row, col, value, index) {
+      return parseHCMDate(value)
+    },
+    getFilters(options) {
+      return options.map((option) => {
+        return {
+          text: option,
+          value: option,
+        }
+      })
+    },
+    handleTableFilter(value, row, col) {
+      const prop = col.property
+      return row[prop] === value
     },
     handleFetchPv(pv) {
       fetchPv(pv).then((response) => {

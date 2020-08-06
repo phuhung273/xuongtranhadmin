@@ -6,7 +6,7 @@
         placeholder="Title"
         style="width: 200px;"
         class="filter-item"
-        @keyup.enter.native="handleFilter"
+        @keyup.enter.native="Table"
       />-->
       <el-select
         v-model="listQuery.source"
@@ -23,7 +23,7 @@
         class="filter-item"
         type="primary"
         icon="el-icon-search"
-        @click="handleFilter"
+        @click="Table"
       >Tìm Kiếm</el-button>
 
       <el-button
@@ -48,55 +48,62 @@
       :key="tableKey"
       v-loading="listLoading"
       :data="list"
+      :default-sort="{prop: 'time', order: 'descending'}"
       border
       fit
       highlight-current-row
       style="width: 100%;"
     >
-      <el-table-column label="Ngày" width="200px" align="center">
+      <el-table-column label="Ngày" sortable width="150px" align="center">
         <template slot-scope="{ row }">
-          <!-- <span>{{ row.timestamp | parseTime('{y}-{m}-{d} {h}:{i}') }}</span> -->
-          <!-- <span>{{ row.time | parseTime('{y}-{m}-{d} {h}:{i}') }}</span> -->
           <span class="link-type" @click="handleUpdate(row)">{{ row.time | parseHCMDate }}</span>
-          <!-- <span>{{ row.time }}</span> -->
         </template>
       </el-table-column>
 
-      <el-table-column label="Nguồn" width="150px" align="center">
+      <!-- <el-table-column
+        label="Ngày"
+        sortable
+        width="150px"
+        align="center"
+        prop="time"
+        :formatter="timeFormatter"
+      />-->
+
+      <!-- <el-table-column label="Nguồn" width="150px" align="center">
         <template slot-scope="{ row }">
           <span>{{ row.source }}</span>
         </template>
-      </el-table-column>
+      </el-table-column>-->
+      <el-table-column
+        label="Nguồn"
+        width="150px"
+        align="center"
+        prop="source"
+        :filters="getFilters(sourceOptions)"
+        :filter-method="handleTableFilter"
+      />
 
-      <el-table-column label="Sản Phẩm" width="150px" align="center">
-        <template slot-scope="{ row }">
-          <span>{{ row.product }}</span>
-        </template>
-      </el-table-column>
+      <el-table-column
+        label="Sản Phẩm"
+        width="150px"
+        align="center"
+        prop="product"
+        :filters="getFilters(productOptions)"
+        :filter-method="handleTableFilter"
+      />
 
-      <el-table-column label="Loại Lead" width="150px" align="center">
-        <template slot-scope="{ row }">
-          <span>{{ row.lead }}</span>
-        </template>
-      </el-table-column>
+      <el-table-column
+        label="Loại Lead"
+        width="150px"
+        align="center"
+        prop="lead"
+        :filters="getFilters(leadOptions)"
+        :filter-method="handleTableFilter"
+      />
 
-      <el-table-column label="Kết Quả" width="80px" align="center">
-        <template slot-scope="{ row }">
-          <!-- <svg-icon
-            v-for="n in + row.importance"
-            :key="n"
-            icon-class="star"
-            class="meta-item__icon"
-          />-->
-          {{ row.result }}
-        </template>
-      </el-table-column>
+      <el-table-column label="Kết Quả" width="80px" align="center" prop="result" />
 
-      <el-table-column label="Nội Dung" width="300px" align="center">
-        <template slot-scope="{ row }">
-          <span>{{ row.content }}</span>
-        </template>
-      </el-table-column>
+      <el-table-column label="Nội Dung" width="300px" align="center" prop="content" />
 
       <!-- <el-table-column
         v-if="showReviewer"
@@ -275,7 +282,8 @@ export default {
   data() {
     return {
       tableKey: 0,
-      list: null,
+      // list: null,
+      list: [],
       total: 0,
       listLoading: true,
       listQuery: {
@@ -362,7 +370,7 @@ export default {
         // console.log(this.list)
       })
     },
-    handleFilter() {
+    Table() {
       this.listQuery.page = 1
       this.getList()
     },
@@ -475,6 +483,21 @@ export default {
           duration: 2000,
         })
       })
+    },
+    timeFormatter(row, col, value, index) {
+      return parseHCMDate(value)
+    },
+    getFilters(options) {
+      return options.map((option) => {
+        return {
+          text: option,
+          value: option,
+        }
+      })
+    },
+    handleTableFilter(value, row, col) {
+      const prop = col.property
+      return row[prop] === value
     },
     handleFetchPv(pv) {
       fetchPv(pv).then((response) => {

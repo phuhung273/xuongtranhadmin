@@ -65,7 +65,7 @@
         <el-input v-model="data.phone" class="dialog-form-field" />
       </el-form-item>
 
-      <el-form-item label="Thời Gian" prop="time" class="dialog-form-item">
+      <el-form-item label="Ngày Bắt Đầu" prop="time" class="dialog-form-item">
         <!-- <el-date-picker v-model="data.time" type="datetime" placeholder="Chọn ngày" /> -->
         <el-date-picker v-model="data.time" placeholder="Chọn ngày" class="dialog-form-field" />
       </el-form-item>
@@ -121,21 +121,13 @@ export default {
       type: String,
       default: '',
     },
+    tempStatus: {
+      type: String,
+      default: '',
+    },
   },
   data() {
     return {
-      // leadOptions: ['Facebook inbox', 'Hotline call', 'Zalo call/inbox'],
-      // productOptions: ['Tranh Canvas', 'Tranh vẽ tường'],
-      // statusOptions: [
-      //   'Hello',
-      //   'Consulting',
-      //   'Design Pick-up',
-      //   'Contract Sent',
-      //   '1st Deposit',
-      //   'Production',
-      //   'Fully Payment',
-      //   'Lost',
-      // ],
       leadOptions: salesLeadOptions,
       productOptions: productOptions,
       statusOptions: statusOptions,
@@ -187,16 +179,16 @@ export default {
 
       if (this.method === 'update') {
         this.updateData()
-          .then((newData) => {
-            this.$emit('submit', newData)
+          .then((newItem) => {
+            this.$emit('submit', newItem)
           })
           .catch((error) => {
             // console.log(error)
           })
       } else if (this.method === 'create') {
         this.createData()
-          .then((newData) => {
-            this.$emit('submit', newData)
+          .then(() => {
+            this.$emit('submit')
           })
           .catch((error) => {
             // console.log(error)
@@ -211,39 +203,77 @@ export default {
 
             fillFormObject(tempData)
 
-            // setTimeout(() => {
-            //   updateCustomer(tempData)
-            //     .then(() => {
-            //       this.$notify({
-            //         title: 'Thành Công',
-            //         message: 'Chỉnh sửa thành công',
-            //         type: 'success',
-            //         duration: 2000,
-            //       })
+            // console.log(tempData)
 
-            //       resolve()
-            //     })
-            //     .catch((error) => {
-            //       // console.log(error)
-            //       reject()
-            //     })
-            // }, 2000)
+            // console.log(this.data.status)
+            // console.log(this.tempStatus)
 
-            updateCustomer(tempData)
-              .then(() => {
-                this.$notify({
-                  title: 'Thành Công',
-                  message: 'Chỉnh sửa thành công',
-                  type: 'success',
-                  duration: 2000,
+            if (this.data.status !== this.tempStatus) {
+              const { id, status } = this.data
+              const modified_time = new Date().toISOString()
+
+              const info = {
+                id,
+                status,
+                modified_time,
+              }
+              tempData.modified_time = modified_time
+
+              // console.log(info)
+
+              updateCustomer(tempData)
+                .then(() => {
+                  this.$notify({
+                    title: 'Thành Công',
+                    message: 'Chỉnh sửa thành công',
+                    type: 'success',
+                    duration: 2000,
+                  })
+
+                  resolve({
+                    listName: status,
+                    newItem: info,
+                  })
                 })
+                .catch((error) => {
+                  // console.log(error)
+                  reject()
+                })
+            } else {
+              // setTimeout(() => {
+              //   updateCustomer(tempData)
+              //     .then(() => {
+              //       this.$notify({
+              //         title: 'Thành Công',
+              //         message: 'Chỉnh sửa thành công',
+              //         type: 'success',
+              //         duration: 2000,
+              //       })
 
-                resolve()
-              })
-              .catch((error) => {
-                // console.log(error)
-                reject()
-              })
+              //       resolve()
+              //     })
+              //     .catch((error) => {
+              //       // console.log(error)
+              //       reject()
+              //     })
+              // }, 2000)
+
+              updateCustomer(tempData)
+                .then(() => {
+                  this.$notify({
+                    title: 'Thành Công',
+                    message: 'Chỉnh sửa thành công',
+                    type: 'success',
+                    duration: 2000,
+                  })
+
+                  resolve()
+                })
+                .catch((error) => {
+                  // console.log(error)
+                  reject()
+                })
+            }
           } else {
             reject()
           }
