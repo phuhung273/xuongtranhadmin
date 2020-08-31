@@ -1,6 +1,6 @@
 <template>
   <div class="dashboard-editor-container">
-    <panel-group @handleSetLineChartData="handleSetLineChartData" />
+    <panel-group :list="list" />
 
     <!-- <el-row style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
       <line-chart :chart-data="lineChartData" />
@@ -26,7 +26,8 @@
           class="filter-item filter-btn"
           type="primary"
           @click="handleFilter"
-        >Áp dụng</el-button>
+          >Áp dụng</el-button
+        >
       </div>
       <time-table :list="list" :loading="listLoading" />
     </el-row>
@@ -88,24 +89,24 @@ import waves from '@/directive/waves' // waves directive
 import {
   marketingLeadOptions,
   salesLeadOptions,
-  productOptions,
+  productOptions
 } from '@/settings'
 
 const organicMap = {
   'Facebook inbox': 'Facebook inbox',
-  'Hotline call': 'Call',
+  'Hotline call': 'Call'
 }
 
 export default {
   name: 'DashboardAdmin',
   directives: {
-    waves,
+    waves
   },
   components: {
     PanelGroup,
     LineChart,
     BoxCard,
-    TimeTable,
+    TimeTable
   },
   data() {
     return {
@@ -123,7 +124,7 @@ export default {
               const start = new Date()
               start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
               picker.$emit('pick', [start, end])
-            },
+            }
           },
           {
             text: 'Tháng trước',
@@ -132,7 +133,7 @@ export default {
               const start = new Date()
               start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
               picker.$emit('pick', [start, end])
-            },
+            }
           },
           {
             text: '3 tháng trước',
@@ -141,25 +142,22 @@ export default {
               const start = new Date()
               start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
               picker.$emit('pick', [start, end])
-            },
-          },
-        ],
+            }
+          }
+        ]
       },
-      value: '',
+      value: ''
     }
   },
   created() {
     this.listQuery = {
       from: last(7, 'day'),
-      to: new Date(),
+      to: new Date()
     }
     // console.log(this.listQuery)
     this.fetchData()
   },
   methods: {
-    handleSetLineChartData(type) {
-      // this.lineChartData = lineChartData[type]
-    },
     async fetchData() {
       const marketingRes = await fetchMarketingList(this.listQuery)
       const marketingList = marketingRes.data.items
@@ -184,7 +182,7 @@ export default {
       // Eliminate all but time in all objects of array
       const uniqueTime = uniqueTimeList.map(({ time }) => time)
 
-      this.lineChartXAxis = uniqueTime.map((item) => parseHCMDate(item))
+      this.lineChartXAxis = uniqueTime.map(item => parseHCMDate(item))
 
       this.lineChartData = this.prepareMarketingChart(uniqueMarketingTimeList)
 
@@ -192,16 +190,16 @@ export default {
       this.listLoading = false
     },
     prepareDistinctTimeList(marketing, sales) {
-      const distinctTimeMarketing = [...new Set(marketing.map((x) => x.time))]
-      const distinctTimeSales = [...new Set(sales.map((x) => x.time))]
+      const distinctTimeMarketing = [...new Set(marketing.map(x => x.time))]
+      const distinctTimeSales = [...new Set(sales.map(x => x.time))]
       const distinctTimeConcat = distinctTimeMarketing.concat(distinctTimeSales)
       const distinctTime = [...new Set(distinctTimeConcat)]
 
-      const uniqueTimeList = distinctTime.map((time) => {
+      const uniqueTimeList = distinctTime.map(time => {
         const row = {
-          marketing: marketing.filter((x) => x.time === time),
-          sales: sales.filter((x) => x.time === time),
-          time: time,
+          marketing: marketing.filter(x => x.time === time),
+          sales: sales.filter(x => x.time === time),
+          time: time
         }
 
         // console.log(row)
@@ -223,14 +221,14 @@ export default {
           customer: customerResult,
           sales: salesResult,
           detail: detailtResult,
-          time: time,
+          time: time
         })
       }
 
       return newList
     },
     summarizeMarketing(marketing) {
-      const distinctMarketingProduct = new Set(marketing.map((x) => x.product))
+      const distinctMarketingProduct = new Set(marketing.map(x => x.product))
       const marketingResult = {}
 
       for (const uniqueProduct of distinctMarketingProduct) {
@@ -248,7 +246,7 @@ export default {
       return marketingResult
     },
     summarizeSales(sales) {
-      const distinctSalesProduct = new Set(sales.map((x) => x.product))
+      const distinctSalesProduct = new Set(sales.map(x => x.product))
       const salesResult = {}
 
       for (const uniqueProduct of distinctSalesProduct) {
@@ -264,7 +262,7 @@ export default {
       return salesResult
     },
     summarizeDetails(sales, marketing) {
-      const distinctSalesProduct = new Set(sales.map((x) => x.product))
+      const distinctSalesProduct = new Set(sales.map(x => x.product))
       const salesResult = {}
 
       // console.log(marketing)
@@ -298,7 +296,7 @@ export default {
           const tempMarketingProduct = marketing[uniqueProduct]
 
           if (tempMarketingProduct !== undefined) {
-            salesLeadOptions.forEach((lead) => {
+            salesLeadOptions.forEach(lead => {
               const salesLeadResult = tempSalesProduct[lead]
 
               if (salesLeadResult !== undefined) {
@@ -349,7 +347,7 @@ export default {
               }
             })
           } else {
-            salesLeadOptions.forEach((lead) => {
+            salesLeadOptions.forEach(lead => {
               const salesLeadResult = tempSalesProduct[lead]
 
               if (salesLeadResult !== undefined) {
@@ -365,7 +363,7 @@ export default {
 
           if (tempMarketingProduct !== undefined) {
             salesResult[uniqueProduct] = {}
-            salesLeadOptions.forEach((lead) => {
+            salesLeadOptions.forEach(lead => {
               const equivalentMarketingLead = organicMap[lead]
 
               // console.log(equivalentMarketingLead)
@@ -393,7 +391,7 @@ export default {
       return salesResult
     },
     summarizeCustomer(sales) {
-      const distinctSalesStatus = new Set(sales.map((x) => x.status))
+      const distinctSalesStatus = new Set(sales.map(x => x.status))
       const salesResult = {}
 
       for (const uniqueStatus of distinctSalesStatus) {
@@ -413,18 +411,18 @@ export default {
 
       const result = {}
 
-      marketingLeadOptions.forEach((item) => {
+      marketingLeadOptions.forEach(item => {
         result[item] = []
       })
 
-      marketingList.forEach((item) => {
+      marketingList.forEach(item => {
         const tempResult = countDistinctKey(
           marketingLeadOptions,
           'lead',
           item.marketing
         )
 
-        marketingLeadOptions.forEach((lead) => {
+        marketingLeadOptions.forEach(lead => {
           result[lead].push(tempResult[lead])
         })
       })
@@ -435,14 +433,14 @@ export default {
     handleRangeChange(range) {
       this.listQuery = {
         from: range[0],
-        to: range[1],
+        to: range[1]
       }
       // console.log(this.listQuery)
     },
     handleFilter() {
       this.fetchData()
-    },
-  },
+    }
+  }
 }
 </script>
 

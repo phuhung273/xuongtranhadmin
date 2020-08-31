@@ -6,15 +6,8 @@
           <svg-icon icon-class="peoples" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
-          <div class="card-panel-text">
-            Khách Hàng
-          </div>
-          <count-to
-            :start-val="0"
-            :end-val="102400"
-            :duration="2600"
-            class="card-panel-num"
-          />
+          <div class="card-panel-text">Khách Hàng</div>
+          <count-to :start-val="0" :end-val="customer" :duration="2600" class="card-panel-num" />
         </div>
       </div>
     </el-col>
@@ -22,21 +15,14 @@
       <div class="card-panel" @click="handleSetLineChartData('messages')">
         <!-- <div class="card-panel-icon-wrapper icon-message">
           <svg-icon icon-class="message" class-name="card-panel-icon" />
-        </div> -->
+        </div>-->
         <div class="card-panel-icon-wrapper icon-el-icon-question">
           <i class="el-icon-question card-panel-icon" />
           <!-- <svg-icon icon-class="el-icon-phone" class-name="card-panel-icon" /> -->
         </div>
         <div class="card-panel-description">
-          <div class="card-panel-text">
-            Hello
-          </div>
-          <count-to
-            :start-val="0"
-            :end-val="81212"
-            :duration="3000"
-            class="card-panel-num"
-          />
+          <div class="card-panel-text">Hello</div>
+          <count-to :start-val="0" :end-val="hello" :duration="3000" class="card-panel-num" />
         </div>
       </div>
     </el-col>
@@ -46,15 +32,8 @@
           <svg-icon icon-class="skill" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
-          <div class="card-panel-text">
-            Design Pick-up
-          </div>
-          <count-to
-            :start-val="0"
-            :end-val="9280"
-            :duration="3200"
-            class="card-panel-num"
-          />
+          <div class="card-panel-text">Design Pick-up</div>
+          <count-to :start-val="0" :end-val="design" :duration="3200" class="card-panel-num" />
         </div>
       </div>
     </el-col>
@@ -65,15 +44,8 @@
           <svg-icon icon-class="guide" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
-          <div class="card-panel-text">
-            Contract Sent
-          </div>
-          <count-to
-            :start-val="0"
-            :end-val="13600"
-            :duration="3600"
-            class="card-panel-num"
-          />
+          <div class="card-panel-text">Contract Sent</div>
+          <count-to :start-val="0" :end-val="contract" :duration="3600" class="card-panel-num" />
         </div>
       </div>
     </el-col>
@@ -85,13 +57,61 @@ import CountTo from 'vue-count-to'
 
 export default {
   components: {
-    CountTo
+    CountTo,
+  },
+  props: {
+    list: {
+      type: Array,
+      default() {
+        return []
+      },
+    },
+  },
+  data() {
+    return {
+      customers: [],
+    }
+  },
+  computed: {
+    customer() {
+      return this.customers.reduce((prev, next) => {
+        let sum = prev
+        for (const status in next) {
+          sum += next[status]
+        }
+        return sum
+      }, 0)
+    },
+    hello() {
+      return this.countStatus('Hello')
+    },
+    design() {
+      return this.countStatus('Design Pick-up')
+    },
+    contract() {
+      return this.countStatus('Contract Sent')
+    },
+  },
+  watch: {
+    list: {
+      deep: true,
+      handler(val) {
+        this.setCustomers(val)
+      },
+    },
   },
   methods: {
-    handleSetLineChartData(type) {
-      this.$emit('handleSetLineChartData', type)
-    }
-  }
+    setCustomers(list) {
+      // console.log(this.list)
+      this.customers = this.list.map((item) => item.customer)
+    },
+    countStatus(statusName) {
+      return this.customers.reduce((prev, next) => {
+        const result = next[statusName]
+        return result ? prev + result : prev
+      }, 0)
+    },
+  },
 }
 </script>
 

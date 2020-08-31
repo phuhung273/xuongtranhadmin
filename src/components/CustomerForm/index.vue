@@ -135,15 +135,15 @@ export default {
         lead: [
           {
             required: true,
-            message: 'Vui lòng nhập loại Lead',
+            message: 'Vui lòng chọn loại Lead',
             trigger: 'change',
           },
         ],
         time: [
           {
-            // type: 'date',
+            type: 'date',
             required: true,
-            message: 'Vui lòng nhập ngày',
+            message: 'Vui lòng chọn ngày',
             trigger: 'change',
           },
         ],
@@ -157,7 +157,21 @@ export default {
         customer: [
           {
             required: true,
-            message: 'Vui lòng nhập khách hàng',
+            message: 'Vui lòng nhập tên khách hàng',
+            trigger: 'change',
+          },
+        ],
+        product: [
+          {
+            required: true,
+            message: 'Vui lòng chọn loại sản phẩm',
+            trigger: 'change',
+          },
+        ],
+        status: [
+          {
+            required: true,
+            message: 'Vui lòng chọn trạng thái khách hàng',
             trigger: 'change',
           },
         ],
@@ -175,8 +189,6 @@ export default {
       })
     },
     handleSubmit() {
-      this.$emit('beforeSubmit')
-
       if (this.method === 'update') {
         this.updateData()
           .then((newItem) => {
@@ -187,8 +199,8 @@ export default {
           })
       } else if (this.method === 'create') {
         this.createData()
-          .then(() => {
-            this.$emit('submit')
+          .then((newItem) => {
+            this.$emit('submit', newItem)
           })
           .catch((error) => {
             // console.log(error)
@@ -196,9 +208,13 @@ export default {
       }
     },
     updateData() {
+      this.data.time = new Date(this.data.time)
+
       return new Promise((resolve, reject) => {
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
+            this.$emit('beforeSubmit')
+
             const tempData = Object.assign({}, this.data)
 
             fillFormObject(tempData)
@@ -240,6 +256,7 @@ export default {
                   reject()
                 })
             } else {
+              // console.log(tempData)
               // setTimeout(() => {
               //   updateCustomer(tempData)
               //     .then(() => {
@@ -275,6 +292,7 @@ export default {
                 })
             }
           } else {
+            // console.log('reject')
             reject()
           }
         })
@@ -287,6 +305,8 @@ export default {
             const tempData = Object.assign({}, this.data)
 
             fillFormObject(tempData)
+
+            tempData.modified_time = tempData.time
 
             // setTimeout(() => {
             //   createCustomer(tempData)

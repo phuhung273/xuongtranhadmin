@@ -51,6 +51,7 @@
       :default-sort="{prop: 'time', order: 'descending'}"
       border
       fit
+      stripe
       highlight-current-row
       style="width: 100%;"
     >

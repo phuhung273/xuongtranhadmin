@@ -111,12 +111,20 @@ export const constantRoutes = [
     path: '/customer',
     component: Layout,
     redirect: '/customer/index',
+    name: 'Khách Hàng',
+    meta: { title: 'Khách Hàng', icon: 'el-icon-s-custom' },
     children: [
       {
-        path: 'index',
-        name: 'Khách Hàng',
-        component: () => import('@/views/customer'),
-        meta: { title: 'Khách Hàng', icon: 'el-icon-s-custom' }
+        path: 'funnel',
+        name: 'customer_funnel',
+        component: () => import('@/views/customer/funnel'),
+        meta: { title: 'Phễu khách hàng' }
+      },
+      {
+        path: 'journey',
+        name: 'customer_journey',
+        component: () => import('@/views/customer/journey'),
+        meta: { title: 'Hành trình khách hàng' }
       }
     ]
   },

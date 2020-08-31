@@ -51,6 +51,7 @@
       :default-sort="{prop: 'time', order: 'descending'}"
       border
       fit
+      stripe
       highlight-current-row
       style="width: 100%;"
     >
@@ -211,37 +212,6 @@ export default {
       },
       dialogPvVisible: false,
       pvData: [],
-      rules: {
-        lead: [
-          {
-            required: true,
-            message: 'Vui lòng nhập loại Lead',
-            trigger: 'change',
-          },
-        ],
-        time: [
-          {
-            type: 'date',
-            required: true,
-            message: 'Vui lòng nhập ngày',
-            trigger: 'change',
-          },
-        ],
-        connection: [
-          {
-            required: true,
-            message: 'Vui lòng nhập tương tác',
-            trigger: 'change',
-          },
-        ],
-        customer: [
-          {
-            required: true,
-            message: 'Vui lòng nhập khách hàng',
-            trigger: 'change',
-          },
-        ],
-      },
       downloadLoading: false,
       dialogDeleteVisible: false,
       dialogDeleteLoading: false,
@@ -335,8 +305,9 @@ export default {
       //     })
       //   }
       // })
+      // console.log(newData)
       this.temp = { ...newData }
-      this.list.unshift(this.temp)
+      this.list.push(this.temp)
       this.dialogFormVisible = false
       this.dialogFormLoading = false
     },
