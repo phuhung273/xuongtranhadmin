@@ -1,6 +1,6 @@
 import { login, logout, getInfo } from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
-import router, { resetRouter } from '@/router'
+import { resetRouter } from '@/router'
 
 const getDefaultState = () => {
   return {
@@ -14,6 +14,9 @@ const getDefaultState = () => {
 const state = getDefaultState()
 
 const mutations = {
+  RESET_STATE: state => {
+    Object.assign(state, getDefaultState())
+  },
   SET_TOKEN: (state, token) => {
     state.token = token
   },
@@ -35,9 +38,19 @@ const actions = {
     return new Promise((resolve, reject) => {
       login({ username: username.trim(), password: password })
         .then(response => {
+          // // Default
+          // const { data } = response
+          // commit('SET_TOKEN', data.token)
+          // setToken(data.token)
+
+          // Xuongtranh
           const { data } = response
-          commit('SET_TOKEN', data.token)
-          setToken(data.token)
+          const accessToken = data['access_token']
+          // console.log(data)
+
+          commit('SET_TOKEN', accessToken)
+          setToken(accessToken)
+
           resolve()
         })
         .catch(error => {
@@ -76,19 +89,13 @@ const actions = {
   },
 
   // user logout
-  logout({ commit, state, dispatch }) {
+  logout({ commit, state }) {
     return new Promise((resolve, reject) => {
       logout(state.token)
         .then(() => {
-          commit('SET_TOKEN', '')
-          commit('SET_ROLES', [])
-          removeToken()
+          removeToken() // must remove  token  first
           resetRouter()
-
-          // reset visited views and cached views
-          // to fixed https://github.com/PanJiaChen/vue-element-admin/issues/2485
-          dispatch('tagsView/delAllViews', null, { root: true })
-
+          commit('RESET_STATE')
           resolve()
         })
         .catch(error => {
@@ -100,33 +107,10 @@ const actions = {
   // remove token
   resetToken({ commit }) {
     return new Promise(resolve => {
-      commit('SET_TOKEN', '')
-      commit('SET_ROLES', [])
-      removeToken()
+      removeToken() // must remove  token  first
+      commit('RESET_STATE')
       resolve()
     })
-  },
-
-  // dynamically modify permissions
-  async changeRoles({ commit, dispatch }, role) {
-    const token = role + '-token'
-
-    commit('SET_TOKEN', token)
-    setToken(token)
-
-    const { roles } = await dispatch('getInfo')
-
-    resetRouter()
-
-    // generate accessible routes map based on roles
-    const accessRoutes = await dispatch('permission/generateRoutes', roles, {
-      root: true
-    })
-    // dynamically add accessible routes
-    router.addRoutes(accessRoutes)
-
-    // reset visited views and cached views
-    dispatch('tagsView/delAllViews', null, { root: true })
   }
 }
 

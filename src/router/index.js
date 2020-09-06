@@ -58,31 +58,6 @@ export const constantRoutes = [
   },
 
   {
-    path: '/manage',
-    component: Layout,
-    redirect: '/manage/index',
-    name: 'Quản Lý',
-    meta: {
-      title: 'Quản Lý',
-      icon: 'el-icon-s-order'
-    },
-    children: [
-      {
-        path: 'marketing',
-        component: () => import('@/views/marketing/manage'),
-        name: 'marketing_manage',
-        meta: { title: 'Quản lý marketing' }
-      },
-      {
-        path: 'sales',
-        component: () => import('@/views/sales/manage'),
-        name: 'sales_manage',
-        meta: { title: 'Quản lý sales' }
-      }
-    ]
-  },
-
-  {
     path: '/statistics',
     component: Layout,
     redirect: '/statistics/index',
@@ -127,7 +102,7 @@ export const constantRoutes = [
         meta: { title: 'Hành trình khách hàng' }
       }
     ]
-  },
+  }
 
   // {
   //   path: '/example',
@@ -162,7 +137,44 @@ export const constantRoutes = [
   //       meta: { title: 'Form', icon: 'form' }
   //     }
   //   ]
-  // },
+  // }
+]
+
+/**
+ * asyncRoutes
+ * the routes that need to be dynamically loaded based on user roles
+ */
+export const asyncRoutes = [
+  {
+    path: '/manage',
+    component: Layout,
+    redirect: '/manage/index',
+    name: 'Quản Lý',
+    meta: {
+      title: 'Quản Lý',
+      icon: 'el-icon-s-order'
+    },
+    children: [
+      {
+        path: 'marketing',
+        component: () => import('@/views/marketing/manage'),
+        name: 'marketing_manage',
+        meta: {
+          title: 'Quản lý marketing',
+          roles: ['admin']
+        }
+      },
+      {
+        path: 'sales',
+        component: () => import('@/views/sales/manage'),
+        name: 'sales_manage',
+        meta: {
+          title: 'Quản lý sales',
+          roles: ['editor']
+        }
+      }
+    ]
+  },
 
   // {
   //   path: '/nested',
@@ -178,7 +190,7 @@ export const constantRoutes = [
   //       path: 'menu1',
   //       component: () => import('@/views/nested/menu1/index'), // Parent router-view
   //       name: 'Menu1',
-  //       meta: { title: 'Menu1' },
+  //       meta: { title: 'Menu1', roles: ['admin'] },
   //       children: [
   //         {
   //           path: 'menu1-1',
@@ -219,8 +231,7 @@ export const constantRoutes = [
   //     {
   //       path: 'menu2',
   //       component: () => import('@/views/nested/menu2/index'),
-  //       name: 'Menu2',
-  //       meta: { title: 'menu2' }
+  //       meta: { title: 'menu2', roles: ['editor'] }
   //     }
   //   ]
   // },

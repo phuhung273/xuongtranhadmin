@@ -3,7 +3,6 @@
     <!-- <el-container v-loading="listLoading" >
 
     </el-container> -->
-    <google-ad unit="AdUnitName"></google-ad>
   </div>
 </template>
 
