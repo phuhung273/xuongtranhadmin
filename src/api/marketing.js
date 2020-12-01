@@ -1,8 +1,10 @@
 import request from '@/utils/db_request'
 
+const endpoint = '/api/marketings'
+
 export function fetchMarketingList(query) {
   return request({
-    url: '/marketing/list',
+    url: endpoint,
     method: 'get',
     params: query
   })
@@ -10,7 +12,7 @@ export function fetchMarketingList(query) {
 
 export function createMarketingTask(data) {
   return request({
-    url: '/marketing/create',
+    url: endpoint,
     method: 'post',
     data
   })
@@ -18,16 +20,16 @@ export function createMarketingTask(data) {
 
 export function updateMarketingTask(data) {
   return request({
-    url: '/marketing/update',
-    method: 'post',
+    url: endpoint,
+    method: 'put',
     data
   })
 }
 
 export function deleteMarketingTask(data) {
   return request({
-    url: '/marketing/delete',
-    method: 'post',
+    url: endpoint,
+    method: 'delete',
     data
   })
 }

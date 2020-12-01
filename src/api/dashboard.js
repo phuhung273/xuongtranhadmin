@@ -2,7 +2,7 @@ import request from '@/utils/db_request'
 
 export function fetchMarketingList(query) {
   return request({
-    url: '/dashboard/marketing',
+    url: '/api/dashboard/marketing',
     method: 'get',
     params: query
   })
@@ -10,7 +10,7 @@ export function fetchMarketingList(query) {
 
 export function fetchSalesList(query) {
   return request({
-    url: '/dashboard/sales',
+    url: '/api/dashboard/sale',
     method: 'get',
     params: query
   })

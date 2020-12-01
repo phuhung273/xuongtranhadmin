@@ -1,8 +1,10 @@
 import request from '@/utils/db_request'
 
+const endpoint = '/api/sales'
+
 export function fetchCustomerList(query) {
   return request({
-    url: '/sales/list',
+    url: endpoint,
     method: 'get',
     params: query
   })
@@ -10,7 +12,7 @@ export function fetchCustomerList(query) {
 
 export function createCustomer(data) {
   return request({
-    url: '/sales/create',
+    url: endpoint,
     method: 'post',
     data
   })
@@ -18,16 +20,16 @@ export function createCustomer(data) {
 
 export function updateCustomer(data) {
   return request({
-    url: '/sales/update',
-    method: 'post',
+    url: endpoint,
+    method: 'put',
     data
   })
 }
 
 export function deleteCustomer(data) {
   return request({
-    url: '/sales/delete',
-    method: 'post',
+    url: endpoint,
+    method: 'delete',
     data
   })
 }

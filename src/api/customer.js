@@ -2,7 +2,7 @@ import request from '@/utils/db_request'
 
 export function fetchCustomerFunnel(query) {
   return request({
-    url: '/customer/list',
+    url: '/api/customer/list',
     method: 'get',
     params: query
   })
@@ -10,14 +10,14 @@ export function fetchCustomerFunnel(query) {
 
 export function fetchOneCustomer(id) {
   return request({
-    url: '/customer/list/' + id,
+    url: '/api/customer/list/' + id,
     method: 'get'
   })
 }
 
 export function updateCustomerFunnel(data) {
   return request({
-    url: '/customer/update',
+    url: '/api/customer/update',
     method: 'post',
     data
   })
