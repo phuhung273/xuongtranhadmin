@@ -18,18 +18,17 @@ export function createMarketingTask(data) {
   })
 }
 
-export function updateMarketingTask(data) {
+export function updateMarketingTask(data, id) {
   return request({
-    url: endpoint,
+    url: `${endpoint}/${id}`,
     method: 'put',
     data
   })
 }
 
-export function deleteMarketingTask(data) {
+export function deleteMarketingTask(id) {
   return request({
-    url: endpoint,
+    url: `${endpoint}/${id}`,
     method: 'delete',
-    data
   })
 }

@@ -14,6 +14,7 @@
         clearable
         style="width: 140px"
         class="filter-item"
+        @keyup.enter.native="Table"
       >
         <el-option v-for="item in sourceOptions" :key="item" :label="item" :value="item" />
       </el-select>
@@ -79,7 +80,7 @@
         label="Nguồn"
         width="150px"
         align="center"
-        prop="source"
+        prop="source_name"
         :filters="getFilters(sourceOptions)"
         :filter-method="handleTableFilter"
       />
@@ -88,7 +89,7 @@
         label="Sản Phẩm"
         width="150px"
         align="center"
-        prop="product"
+        prop="product_name"
         :filters="getFilters(productOptions)"
         :filter-method="handleTableFilter"
       />
@@ -97,7 +98,7 @@
         label="Loại Lead"
         width="150px"
         align="center"
-        prop="lead"
+        prop="lead_name"
         :filters="getFilters(leadOptions)"
         :filter-method="handleTableFilter"
       />
@@ -167,20 +168,20 @@
         label-width="100px"
         style="width: 400px; margin-left:50px;"
       >
-        <el-form-item label="Nguồn" prop="source">
-          <el-select v-model="temp.source" class="filter-item" placeholder="Chọn nguồn">
+        <el-form-item label="Nguồn" prop="source_name">
+          <el-select v-model="temp.source_name" class="filter-item" placeholder="Chọn nguồn">
             <el-option v-for="item in sourceOptions" :key="item" :label="item" :value="item" />
           </el-select>
         </el-form-item>
 
-        <el-form-item label="Sản Phẩm" prop="product">
-          <el-select v-model="temp.product" class="filter-item" placeholder="Chọn sản phẩm">
+        <el-form-item label="Sản Phẩm" prop="product_name">
+          <el-select v-model="temp.product_name" class="filter-item" placeholder="Chọn sản phẩm">
             <el-option v-for="item in productOptions" :key="item" :label="item" :value="item" />
           </el-select>
         </el-form-item>
 
-        <el-form-item label="Loại Lead" prop="lead">
-          <el-select v-model="temp.lead" class="filter-item" placeholder="Chọn sản phẩm">
+        <el-form-item label="Loại Lead" prop="lead_name">
+          <el-select v-model="temp.lead_name" class="filter-item" placeholder="Chọn sản phẩm">
             <el-option v-for="item in leadOptions" :key="item" :label="item" :value="item" />
           </el-select>
         </el-form-item>
@@ -292,20 +293,17 @@ export default {
         limit: 20,
         source: undefined,
       },
-      // sourceOptions: ['Facebook', 'SEM'],
-      // productOptions: ['Tranh Canvas', 'Tranh vẽ tường'],
-      // leadOptions: ['Facebook inbox', 'Call'],
       sourceOptions: marketingSourceOptions,
       leadOptions: marketingLeadOptions,
       productOptions: productOptions,
       temp: {
         id: undefined,
-        source: undefined,
-        product: undefined,
+        source_name: undefined,
+        product_name: undefined,
         content: undefined,
         time: undefined,
         result: undefined,
-        lead: undefined,
+        lead_name: undefined,
       },
       dialogFormVisible: false,
       dialogStatus: '',
@@ -316,7 +314,7 @@ export default {
       dialogPvVisible: false,
       pvData: [],
       rules: {
-        source: [
+        source_name: [
           { required: true, message: 'Vui lòng nhập nguồn', trigger: 'change' },
         ],
         time: [
@@ -327,7 +325,7 @@ export default {
             trigger: 'change',
           },
         ],
-        product: [
+        product_name: [
           {
             required: true,
             message: 'Vui lòng nhập sản phẩm',
@@ -377,12 +375,12 @@ export default {
     },
     resetTemp() {
       this.temp = {
-        source: undefined,
-        product: undefined,
+        source_name: undefined,
+        product_name: undefined,
         content: undefined,
         time: undefined,
         result: undefined,
-        lead: undefined,
+        lead_name: undefined,
       }
     },
     handleCreate() {
@@ -448,7 +446,10 @@ export default {
           fillFormObject(tempData)
           this.dialogFormLoading = true
 
-          updateMarketingTask(tempData).then(() => {
+          const { id } = tempData
+          delete tempData.id
+
+          updateMarketingTask(tempData, id).then(() => {
             const index = this.list.findIndex((v) => v.id === this.temp.id)
             this.list.splice(index, 1, this.temp)
             this.dialogFormLoading = false
@@ -472,7 +473,7 @@ export default {
     deleteData() {
       this.dialogDeleteLoading = true
 
-      deleteMarketingTask({ id: this.tempDeleteId }).then(() => {
+      deleteMarketingTask(this.tempDeleteId).then(() => {
         this.list.splice(this.tempDeleteIndex, 1)
         this.dialogDeleteLoading = false
         this.dialogDeleteVisible = false

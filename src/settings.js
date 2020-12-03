@@ -15,9 +15,9 @@ module.exports = {
 
   /**
    * @type {Array}
-   * @description Example: ['Tranh Canvas', 'Tranh vẽ tường']
+   * @description Example: ['Tranh canvas', 'Tranh vẽ tường']
    */
-  productOptions: ['Tranh Canvas', 'Tranh vẽ tường'],
+  productOptions: ['Tranh canvas', 'Tranh vẽ tường'],
 
   /**
    * @type {Array}

@@ -3,7 +3,7 @@ const intlDateObj = new Intl.DateTimeFormat('id-ID', {
 })
 
 export function parseHCMDate(dateString) {
-  if (dateString !== undefined && dateString !== '') {
+  if (dateString !== undefined && dateString !== '' && dateString !== null) {
     const date = Date.parse(dateString)
     const hcmDate = intlDateObj.format(date)
     return hcmDate
