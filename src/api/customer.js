@@ -1,8 +1,10 @@
 import request from '@/utils/db_request'
 
+const endpoint = '/api/customer'
+
 export function fetchCustomerFunnel(query) {
   return request({
-    url: '/api/customer/list',
+    url: endpoint,
     method: 'get',
     params: query
   })
@@ -10,15 +12,15 @@ export function fetchCustomerFunnel(query) {
 
 export function fetchOneCustomer(id) {
   return request({
-    url: '/api/customer/list/' + id,
+    url: `${endpoint}/${id}`,
     method: 'get'
   })
 }
 
-export function updateCustomerFunnel(data) {
+export function updateCustomerFunnel(data, id) {
   return request({
-    url: '/api/customer/update',
-    method: 'post',
+    url: `${endpoint}/${id}`,
+    method: 'put',
     data
   })
 }

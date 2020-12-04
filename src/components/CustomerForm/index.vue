@@ -21,9 +21,9 @@
         <el-input v-model="data.customer" placeholder="Tên khách hàng" class="dialog-form-field" />
       </el-form-item>
 
-      <el-form-item label="Loại Lead" prop="lead" class="dialog-form-item">
+      <el-form-item label="Loại Lead" prop="sale_lead_name" class="dialog-form-item">
         <el-select
-          v-model="data.lead"
+          v-model="data.sale_lead_name"
           class="filter-item dialog-form-field"
           placeholder="Chọn loại Lead"
         >
@@ -31,9 +31,9 @@
         </el-select>
       </el-form-item>
 
-      <el-form-item label="Sản Phẩm" prop="product" class="dialog-form-item">
+      <el-form-item label="Sản Phẩm" prop="product_name" class="dialog-form-item">
         <el-select
-          v-model="data.product"
+          v-model="data.product_name"
           class="filter-item dialog-form-field"
           placeholder="Chọn sản phẩm"
         >
@@ -70,9 +70,9 @@
         <el-date-picker v-model="data.time" placeholder="Chọn ngày" class="dialog-form-field" />
       </el-form-item>
 
-      <el-form-item label="Chốt Deal" prop="status" class="dialog-form-item">
+      <el-form-item label="Chốt Deal" prop="status_name" class="dialog-form-item">
         <el-select
-          v-model="data.status"
+          v-model="data.status_name"
           class="filter-item dialog-form-field"
           placeholder="Tình trạng deal"
         >
@@ -132,7 +132,7 @@ export default {
       productOptions: productOptions,
       statusOptions: statusOptions,
       rules: {
-        lead: [
+        sale_lead_name: [
           {
             required: true,
             message: 'Vui lòng chọn loại Lead',
@@ -161,14 +161,14 @@ export default {
             trigger: 'change',
           },
         ],
-        product: [
+        product_name: [
           {
             required: true,
             message: 'Vui lòng chọn loại sản phẩm',
             trigger: 'change',
           },
         ],
-        status: [
+        status_name: [
           {
             required: true,
             message: 'Vui lòng chọn trạng thái khách hàng',
@@ -178,7 +178,9 @@ export default {
       },
     }
   },
-  created() {},
+  created() {
+    
+  },
   methods: {
     handleClose() {
       this.$emit('closeForm')
@@ -221,23 +223,24 @@ export default {
 
             // console.log(tempData)
 
-            // console.log(this.data.status)
+            // console.log(this.data.status_name)
             // console.log(this.tempStatus)
 
-            if (this.data.status !== this.tempStatus) {
-              const { id, status } = this.data
+            const { id, status_name } = this.data
+
+            if (this.data.status_name !== this.tempStatus) {
               const modified_time = new Date().toISOString()
 
               const info = {
                 id,
-                status,
+                status_name,
                 modified_time,
               }
               tempData.modified_time = modified_time
 
               // console.log(info)
 
-              updateCustomer(tempData)
+              updateCustomer(tempData, id)
                 .then(() => {
                   this.$notify({
                     title: 'Thành Công',
@@ -247,7 +250,7 @@ export default {
                   })
 
                   resolve({
-                    listName: status,
+                    listName: status_name,
                     newItem: info,
                   })
                 })
@@ -275,7 +278,7 @@ export default {
               //     })
               // }, 2000)
 
-              updateCustomer(tempData)
+              updateCustomer(tempData, id)
                 .then(() => {
                   this.$notify({
                     title: 'Thành Công',

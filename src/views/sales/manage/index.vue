@@ -74,7 +74,7 @@
         label="Loại Lead"
         width="150px"
         align="center"
-        prop="lead"
+        prop="sale_lead_name"
         :filters="getFilters(leadOptions)"
         :filter-method="handleTableFilter"
       />
@@ -83,7 +83,7 @@
         label="Sản Phẩm"
         width="150px"
         align="center"
-        prop="product"
+        prop="product_name"
         :filters="getFilters(productOptions)"
         :filter-method="handleTableFilter"
       />
@@ -96,7 +96,7 @@
         label="Chốt Deal"
         class-name="status-col"
         width="150px"
-        prop="status"
+        prop="status_name"
         :filters="getFilters(statusOptions)"
         :filter-method="handleTableFilter"
       />
@@ -193,13 +193,13 @@ export default {
       temp: {
         id: undefined,
         customer: undefined,
-        lead: undefined,
+        sale_lead_name: undefined,
         demand: undefined,
         connection: undefined,
-        status: undefined,
+        status_name: undefined,
         email: undefined,
         phone: undefined,
-        product: undefined,
+        product_name: undefined,
         time: undefined,
         modified_time: undefined,
       },
@@ -252,13 +252,13 @@ export default {
       this.temp = {
         id: undefined,
         customer: undefined,
-        lead: undefined,
+        sale_lead_name: undefined,
         demand: undefined,
         connection: undefined,
-        status: undefined,
+        status_name: undefined,
         email: undefined,
         phone: undefined,
-        product: undefined,
+        product_name: undefined,
         time: undefined,
         modified_time: undefined,
       }
@@ -323,7 +323,7 @@ export default {
       //   this.$refs['dataForm'].clearValidate()
       // })
 
-      this.tempStatus = this.temp.status
+      this.tempStatus = this.temp.status_name
       this.openForm()
     },
     updateData() {
@@ -359,7 +359,7 @@ export default {
     deleteData() {
       this.dialogDeleteLoading = true
 
-      deleteCustomer({ id: this.tempDeleteId }).then(() => {
+      deleteCustomer( this.tempDeleteId ).then(() => {
         this.list.splice(this.tempDeleteIndex, 1)
         this.dialogDeleteLoading = false
         this.dialogDeleteVisible = false

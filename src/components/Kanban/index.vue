@@ -85,13 +85,13 @@ export default {
 
         const info = {
           id,
-          status: this.headerText,
+          status_name: this.headerText,
           modified_time,
         }
 
         // console.log(info)
         // console.log(this.headerText)
-        updateCustomerFunnel(info)
+        updateCustomerFunnel(info, id)
           .then(() => {
             this.$emit('updateColumn', {
               listName: this.headerText,

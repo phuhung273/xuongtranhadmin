@@ -18,18 +18,17 @@ export function createCustomer(data) {
   })
 }
 
-export function updateCustomer(data) {
+export function updateCustomer(data, id) {
   return request({
-    url: endpoint,
+    url: `${endpoint}/${id}`,
     method: 'put',
     data
   })
 }
 
-export function deleteCustomer(data) {
+export function deleteCustomer(id) {
   return request({
-    url: endpoint,
+    url: `${endpoint}/${id}`,
     method: 'delete',
-    data
   })
 }
