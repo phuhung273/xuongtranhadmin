@@ -2,7 +2,9 @@
   <div class="inner-cell">
     <ul v-for="product in list" :key="product.name">
       <div>{{ product.name }}</div>
-      <li v-for="lead in product.lead" :key="lead.name">{{ lead.name }}: {{ lead.result }}</li>
+      <li v-for="lead in product.lead" :key="lead.name">
+        {{ lead.name }}: {{ lead.result }}
+      </li>
     </ul>
   </div>
 </template>
@@ -14,12 +16,12 @@ export default {
       type: Object,
       default() {
         return {}
-      },
-    },
+      }
+    }
   },
   data() {
     return {
-      list: undefined,
+      list: undefined
     }
   },
   created() {
@@ -36,7 +38,7 @@ export default {
         for (const lead in this.data[product]) {
           const newLead = {
             name: lead,
-            result: this.data[product][lead],
+            result: this.data[product][lead]
           }
           newProduct.lead.push(newLead)
         }
@@ -45,8 +47,8 @@ export default {
 
       this.list = newList
       // console.log(newList)
-    },
-  },
+    }
+  }
 }
 </script>
 

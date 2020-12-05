@@ -65,7 +65,7 @@ export default {
   name: 'DragKanbanDemo',
   components: {
     Kanban,
-    CustomerForm,
+    CustomerForm
   },
   data() {
     return {
@@ -75,39 +75,39 @@ export default {
       statusObjects: [
         {
           name: 'Hello',
-          componentKey: 0,
+          componentKey: 0
         },
         {
           name: 'Consulting',
-          componentKey: 0,
+          componentKey: 0
         },
         {
           name: 'Design Pick-up',
-          componentKey: 0,
+          componentKey: 0
         },
         {
           name: 'Contract Sent',
-          componentKey: 0,
+          componentKey: 0
         },
         {
           name: '1st Deposit',
-          componentKey: 0,
+          componentKey: 0
         },
         {
           name: 'Production',
-          componentKey: 0,
+          componentKey: 0
         },
         {
           name: 'Fully Payment',
-          componentKey: 0,
+          componentKey: 0
         },
         {
           name: 'Lost',
-          componentKey: 0,
-        },
+          componentKey: 0
+        }
       ],
       listQuery: {
-        source: undefined,
+        source: undefined
       },
       dialogFormVisible: false,
       dialogFormLoading: false,
@@ -122,9 +122,9 @@ export default {
         phone: undefined,
         product_name: undefined,
         time: undefined,
-        modified_time: undefined,
+        modified_time: undefined
       },
-      tempStatus: undefined,
+      tempStatus: undefined
     }
   },
   created() {
@@ -132,7 +132,7 @@ export default {
   },
   methods: {
     getData() {
-      fetchCustomerFunnel(this.listQuery).then((response) => {
+      fetchCustomerFunnel(this.listQuery).then(response => {
         // console.log(response)
         this.list = this.prepareDraggableList(response.data.items)
         this.listLoading = false
@@ -146,8 +146,10 @@ export default {
     prepareDraggableList(items) {
       const newList = {}
 
-      this.statusObjects.forEach((status_name) => {
-        const statusList = items.filter((item) => item.status_name === status_name.name)
+      this.statusObjects.forEach(status_name => {
+        const statusList = items.filter(
+          item => item.status_name === status_name.name
+        )
 
         newList[status_name.name] = statusList
       })
@@ -160,7 +162,7 @@ export default {
       this.dialogFormVisible = true
       this.dialogFormLoading = true
 
-      fetchOneCustomer(id).then((response) => {
+      fetchOneCustomer(id).then(response => {
         // console.log(response)
         // setTimeout(() => {
         //   this.temp = response.data.items[0]
@@ -186,7 +188,7 @@ export default {
         phone: undefined,
         product_name: undefined,
         time: undefined,
-        modified_time: undefined,
+        modified_time: undefined
       }
     },
     handleBeforeSubmit() {
@@ -201,14 +203,14 @@ export default {
       const newList = { ...this.list }
       if (this.temp.status_name === this.tempStatus) {
         let oldStatusList = [...this.list[this.temp.status_name]]
-        oldStatusList = oldStatusList.map((item) => {
+        oldStatusList = oldStatusList.map(item => {
           return item.id === this.temp.id ? this.temp : item
         })
 
         newList[this.tempStatus] = oldStatusList
       } else {
         let oldStatusList = [...this.list[this.tempStatus]]
-        oldStatusList = oldStatusList.filter((item) => item.id !== this.temp.id)
+        oldStatusList = oldStatusList.filter(item => item.id !== this.temp.id)
         // console.log(oldStatusList)
         newList[this.tempStatus] = oldStatusList
         // console.log(newList)
@@ -253,7 +255,7 @@ export default {
       // console.log(listName)
 
       const { id, modified_time } = newItem
-      const modifiedList = this.list[listName].map((item) => {
+      const modifiedList = this.list[listName].map(item => {
         if (item.id === id) {
           const newItem = { ...item }
           newItem.modified_time = modified_time
@@ -269,11 +271,11 @@ export default {
     },
     reRenderStatus(statusName) {
       // Change key to rerender
-      const newStatusObjects = this.statusObjects.map((status_name) => {
+      const newStatusObjects = this.statusObjects.map(status_name => {
         if (status_name.name === statusName) {
           return {
             name: status_name.name,
-            componentKey: status_name.componentKey + 1,
+            componentKey: status_name.componentKey + 1
           }
         }
 
@@ -284,10 +286,10 @@ export default {
       // console.log(this.statusObjects)
     },
     reRenderStatuses(statusList) {
-      statusList.forEach((status_name) => {
+      statusList.forEach(status_name => {
         this.reRenderStatus(status_name)
       })
-    },
-  },
+    }
+  }
 }
 </script>

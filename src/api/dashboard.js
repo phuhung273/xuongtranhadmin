@@ -1,8 +1,10 @@
 import request from '@/utils/db_request'
 
+const endpoint = '/api/dashboard'
+
 export function fetchMarketingList(query) {
   return request({
-    url: '/api/dashboard/marketing',
+    url: `${endpoint}/marketing`,
     method: 'get',
     params: query
   })
@@ -10,7 +12,7 @@ export function fetchMarketingList(query) {
 
 export function fetchSalesList(query) {
   return request({
-    url: '/api/dashboard/sale',
+    url: `${endpoint}/sale`,
     method: 'get',
     params: query
   })

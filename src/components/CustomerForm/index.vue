@@ -18,30 +18,56 @@
       :inline="true"
     >
       <el-form-item label="Khách Hàng" prop="customer" class="dialog-form-item">
-        <el-input v-model="data.customer" placeholder="Tên khách hàng" class="dialog-form-field" />
+        <el-input
+          v-model="data.customer"
+          placeholder="Tên khách hàng"
+          class="dialog-form-field"
+        />
       </el-form-item>
 
-      <el-form-item label="Loại Lead" prop="sale_lead_name" class="dialog-form-item">
+      <el-form-item
+        label="Loại Lead"
+        prop="sale_lead_name"
+        class="dialog-form-item"
+      >
         <el-select
           v-model="data.sale_lead_name"
           class="filter-item dialog-form-field"
           placeholder="Chọn loại Lead"
         >
-          <el-option v-for="item in leadOptions" :key="item" :label="item" :value="item" />
+          <el-option
+            v-for="item in leadOptions"
+            :key="item"
+            :label="item"
+            :value="item"
+          />
         </el-select>
       </el-form-item>
 
-      <el-form-item label="Sản Phẩm" prop="product_name" class="dialog-form-item">
+      <el-form-item
+        label="Sản Phẩm"
+        prop="product_name"
+        class="dialog-form-item"
+      >
         <el-select
           v-model="data.product_name"
           class="filter-item dialog-form-field"
           placeholder="Chọn sản phẩm"
         >
-          <el-option v-for="item in productOptions" :key="item" :label="item" :value="item" />
+          <el-option
+            v-for="item in productOptions"
+            :key="item"
+            :label="item"
+            :value="item"
+          />
         </el-select>
       </el-form-item>
 
-      <el-form-item label="Nhu Cầu Cụ Thể" prop="demand" class="dialog-form-item">
+      <el-form-item
+        label="Nhu Cầu Cụ Thể"
+        prop="demand"
+        class="dialog-form-item"
+      >
         <el-input v-model="data.demand" class="dialog-form-field" />
       </el-form-item>
 
@@ -67,16 +93,29 @@
 
       <el-form-item label="Ngày Bắt Đầu" prop="time" class="dialog-form-item">
         <!-- <el-date-picker v-model="data.time" type="datetime" placeholder="Chọn ngày" /> -->
-        <el-date-picker v-model="data.time" placeholder="Chọn ngày" class="dialog-form-field" />
+        <el-date-picker
+          v-model="data.time"
+          placeholder="Chọn ngày"
+          class="dialog-form-field"
+        />
       </el-form-item>
 
-      <el-form-item label="Chốt Deal" prop="status_name" class="dialog-form-item">
+      <el-form-item
+        label="Chốt Deal"
+        prop="status_name"
+        class="dialog-form-item"
+      >
         <el-select
           v-model="data.status_name"
           class="filter-item dialog-form-field"
           placeholder="Tình trạng deal"
         >
-          <el-option v-for="item in statusOptions" :key="item" :label="item" :value="item" />
+          <el-option
+            v-for="item in statusOptions"
+            :key="item"
+            :label="item"
+            :value="item"
+          />
         </el-select>
       </el-form-item>
     </el-form>
@@ -98,33 +137,33 @@ import { salesLeadOptions, productOptions, statusOptions } from '@/settings'
 export default {
   name: 'CustomerForm',
   filters: {
-    parseHCMDate,
+    parseHCMDate
   },
   props: {
     visible: {
       type: Boolean,
-      default: false,
+      default: false
     },
     loading: {
       type: Boolean,
-      default: false,
+      default: false
     },
     data: {
       type: Object,
-      default: undefined,
+      default: undefined
     },
     method: {
       type: String,
-      default: '',
+      default: ''
     },
     title: {
       type: String,
-      default: '',
+      default: ''
     },
     tempStatus: {
       type: String,
-      default: '',
-    },
+      default: ''
+    }
   },
   data() {
     return {
@@ -136,51 +175,49 @@ export default {
           {
             required: true,
             message: 'Vui lòng chọn loại Lead',
-            trigger: 'change',
-          },
+            trigger: 'change'
+          }
         ],
         time: [
           {
             type: 'date',
             required: true,
             message: 'Vui lòng chọn ngày',
-            trigger: 'change',
-          },
+            trigger: 'change'
+          }
         ],
         connection: [
           {
             required: true,
             message: 'Vui lòng nhập tương tác',
-            trigger: 'change',
-          },
+            trigger: 'change'
+          }
         ],
         customer: [
           {
             required: true,
             message: 'Vui lòng nhập tên khách hàng',
-            trigger: 'change',
-          },
+            trigger: 'change'
+          }
         ],
         product_name: [
           {
             required: true,
             message: 'Vui lòng chọn loại sản phẩm',
-            trigger: 'change',
-          },
+            trigger: 'change'
+          }
         ],
         status_name: [
           {
             required: true,
             message: 'Vui lòng chọn trạng thái khách hàng',
-            trigger: 'change',
-          },
-        ],
-      },
+            trigger: 'change'
+          }
+        ]
+      }
     }
   },
-  created() {
-    
-  },
+  created() {},
   methods: {
     handleClose() {
       this.$emit('closeForm')
@@ -193,18 +230,18 @@ export default {
     handleSubmit() {
       if (this.method === 'update') {
         this.updateData()
-          .then((newItem) => {
+          .then(newItem => {
             this.$emit('submit', newItem)
           })
-          .catch((error) => {
+          .catch(error => {
             // console.log(error)
           })
       } else if (this.method === 'create') {
         this.createData()
-          .then((newItem) => {
+          .then(newItem => {
             this.$emit('submit', newItem)
           })
-          .catch((error) => {
+          .catch(error => {
             // console.log(error)
           })
       }
@@ -213,7 +250,7 @@ export default {
       this.data.time = new Date(this.data.time)
 
       return new Promise((resolve, reject) => {
-        this.$refs['dataForm'].validate((valid) => {
+        this.$refs['dataForm'].validate(valid => {
           if (valid) {
             this.$emit('beforeSubmit')
 
@@ -234,7 +271,7 @@ export default {
               const info = {
                 id,
                 status_name,
-                modified_time,
+                modified_time
               }
               tempData.modified_time = modified_time
 
@@ -246,15 +283,15 @@ export default {
                     title: 'Thành Công',
                     message: 'Chỉnh sửa thành công',
                     type: 'success',
-                    duration: 2000,
+                    duration: 2000
                   })
 
                   resolve({
                     listName: status_name,
-                    newItem: info,
+                    newItem: info
                   })
                 })
-                .catch((error) => {
+                .catch(error => {
                   // console.log(error)
                   reject()
                 })
@@ -284,12 +321,12 @@ export default {
                     title: 'Thành Công',
                     message: 'Chỉnh sửa thành công',
                     type: 'success',
-                    duration: 2000,
+                    duration: 2000
                   })
 
                   resolve()
                 })
-                .catch((error) => {
+                .catch(error => {
                   // console.log(error)
                   reject()
                 })
@@ -303,7 +340,7 @@ export default {
     },
     createData() {
       return new Promise((resolve, reject) => {
-        this.$refs['dataForm'].validate((valid) => {
+        this.$refs['dataForm'].validate(valid => {
           if (valid) {
             const tempData = Object.assign({}, this.data)
 
@@ -330,18 +367,18 @@ export default {
             // }, 2000)
 
             createCustomer(tempData)
-              .then((response) => {
+              .then(response => {
                 this.$notify({
                   title: 'Thành Công',
                   message: 'Thêm thành công',
                   type: 'success',
-                  duration: 2000,
+                  duration: 2000
                 })
                 // console.log(response)
                 tempData.id = response.data.insertId
                 resolve(tempData)
               })
-              .catch((error) => {
+              .catch(error => {
                 console.log(error)
                 reject()
               })
@@ -350,8 +387,8 @@ export default {
           }
         })
       })
-    },
-  },
+    }
+  }
 }
 </script>
 

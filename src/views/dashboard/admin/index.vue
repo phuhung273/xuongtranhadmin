@@ -228,15 +228,17 @@ export default {
       return newList
     },
     summarizeMarketing(marketing) {
-      const distinctMarketingProduct = new Set(marketing.map(x => x.product))
+      const distinctMarketingProduct = new Set(
+        marketing.map(x => x.product_name)
+      )
       const marketingResult = {}
 
       for (const uniqueProduct of distinctMarketingProduct) {
         const tempResult = {}
-        for (const { product, lead, result } of marketing) {
-          if (product === uniqueProduct) {
-            tempResult[lead] = tempResult[lead]
-              ? tempResult[lead] + result
+        for (const { product_name, lead_name, result } of marketing) {
+          if (product_name === uniqueProduct) {
+            tempResult[lead_name] = tempResult[lead_name]
+              ? tempResult[lead_name] + result
               : result
           }
         }
@@ -246,14 +248,16 @@ export default {
       return marketingResult
     },
     summarizeSales(sales) {
-      const distinctSalesProduct = new Set(sales.map(x => x.product))
+      const distinctSalesProduct = new Set(sales.map(x => x.product_name))
       const salesResult = {}
 
       for (const uniqueProduct of distinctSalesProduct) {
         const tempResult = {}
-        for (const { product, lead } of sales) {
-          if (product === uniqueProduct) {
-            tempResult[lead] = tempResult[lead] ? tempResult[lead] + 1 : 1
+        for (const { product_name, sale_lead_name } of sales) {
+          if (product_name === uniqueProduct) {
+            tempResult[sale_lead_name] = tempResult[sale_lead_name]
+              ? tempResult[sale_lead_name] + 1
+              : 1
           }
         }
         salesResult[uniqueProduct] = tempResult
@@ -262,26 +266,32 @@ export default {
       return salesResult
     },
     summarizeDetails(sales, marketing) {
-      const distinctSalesProduct = new Set(sales.map(x => x.product))
+      const distinctSalesProduct = new Set(sales.map(x => x.product_name))
       const salesResult = {}
 
       // console.log(marketing)
 
       for (const uniqueProduct of distinctSalesProduct) {
         const tempResult = {}
-        for (const { product, lead, status } of sales) {
-          if (product === uniqueProduct) {
-            tempResult[lead] = tempResult[lead] ? tempResult[lead] : {}
+        for (const { product_name, sale_lead_name, status_name } of sales) {
+          if (product_name === uniqueProduct) {
+            tempResult[sale_lead_name] = tempResult[sale_lead_name]
+              ? tempResult[sale_lead_name]
+              : {}
 
-            tempResult[lead].result = tempResult[lead].result
-              ? tempResult[lead].result + 1
+            tempResult[sale_lead_name].result = tempResult[sale_lead_name]
+              .result
+              ? tempResult[sale_lead_name].result + 1
               : 1
 
-            tempResult[lead].status = tempResult[lead].status
-              ? tempResult[lead].status
+            tempResult[sale_lead_name].status_name = tempResult[sale_lead_name]
+              .status_name
+              ? tempResult[sale_lead_name].status_name
               : {}
-            tempResult[lead].status[status] = tempResult[lead].status[status]
-              ? tempResult[lead].status[status] + 1
+            tempResult[sale_lead_name].status_name[status_name] = tempResult[
+              sale_lead_name
+            ].status_name[status_name]
+              ? tempResult[sale_lead_name].status_name[status_name] + 1
               : 1
           }
         }
@@ -296,12 +306,13 @@ export default {
           const tempMarketingProduct = marketing[uniqueProduct]
 
           if (tempMarketingProduct !== undefined) {
-            salesLeadOptions.forEach(lead => {
-              const salesLeadResult = tempSalesProduct[lead]
+            salesLeadOptions.forEach(sale_lead_name => {
+              const salesLeadResult = tempSalesProduct[sale_lead_name]
 
               if (salesLeadResult !== undefined) {
-                const salesLeadNumericResult = tempSalesProduct[lead].result
-                const equivalentMarketingLead = organicMap[lead]
+                const salesLeadNumericResult =
+                  tempSalesProduct[sale_lead_name].result
+                const equivalentMarketingLead = organicMap[sale_lead_name]
                 const equivalentMarketingResult = tempMarketingProduct[
                   equivalentMarketingLead
                 ]
@@ -311,50 +322,50 @@ export default {
                 // console.log(equivalentMarketingResult)
 
                 if (salesLeadNumericResult < equivalentMarketingResult) {
-                  salesResult[uniqueProduct][lead][
+                  salesResult[uniqueProduct][sale_lead_name][
                     'Non-organic'
                   ] = salesLeadNumericResult
 
-                  salesResult[uniqueProduct][lead]['Organic'] = 0
+                  salesResult[uniqueProduct][sale_lead_name]['Organic'] = 0
 
-                  salesResult[uniqueProduct][lead]['Lost'] =
+                  salesResult[uniqueProduct][sale_lead_name]['Lost'] =
                     equivalentMarketingResult - salesLeadNumericResult
                 } else if (salesLeadNumericResult > equivalentMarketingResult) {
-                  salesResult[uniqueProduct][lead][
+                  salesResult[uniqueProduct][sale_lead_name][
                     'Non-organic'
                   ] = equivalentMarketingResult
 
-                  salesResult[uniqueProduct][lead]['Organic'] =
+                  salesResult[uniqueProduct][sale_lead_name]['Organic'] =
                     salesLeadNumericResult - equivalentMarketingResult
 
-                  salesResult[uniqueProduct][lead]['Lost'] = 0
+                  salesResult[uniqueProduct][sale_lead_name]['Lost'] = 0
                 }
               } else {
-                const equivalentMarketingLead = organicMap[lead]
+                const equivalentMarketingLead = organicMap[sale_lead_name]
                 const equivalentMarketingResult = tempMarketingProduct[
                   equivalentMarketingLead
                 ]
                   ? tempMarketingProduct[equivalentMarketingLead]
                   : 0
 
-                salesResult[uniqueProduct][lead] = {}
+                salesResult[uniqueProduct][sale_lead_name] = {}
 
-                salesResult[uniqueProduct][lead]['Non-organic'] = 0
-                salesResult[uniqueProduct][lead]['Organic'] = 0
-                salesResult[uniqueProduct][lead][
+                salesResult[uniqueProduct][sale_lead_name]['Non-organic'] = 0
+                salesResult[uniqueProduct][sale_lead_name]['Organic'] = 0
+                salesResult[uniqueProduct][sale_lead_name][
                   'Lost'
                 ] = equivalentMarketingResult
               }
             })
           } else {
-            salesLeadOptions.forEach(lead => {
-              const salesLeadResult = tempSalesProduct[lead]
+            salesLeadOptions.forEach(sale_lead_name => {
+              const salesLeadResult = tempSalesProduct[sale_lead_name]
 
               if (salesLeadResult !== undefined) {
-                salesResult[uniqueProduct][lead]['Non-organic'] = 0
-                salesResult[uniqueProduct][lead]['Organic'] =
+                salesResult[uniqueProduct][sale_lead_name]['Non-organic'] = 0
+                salesResult[uniqueProduct][sale_lead_name]['Organic'] =
                   salesLeadResult.result
-                salesResult[uniqueProduct][lead]['Lost'] = 0
+                salesResult[uniqueProduct][sale_lead_name]['Lost'] = 0
               }
             })
           }
@@ -363,8 +374,8 @@ export default {
 
           if (tempMarketingProduct !== undefined) {
             salesResult[uniqueProduct] = {}
-            salesLeadOptions.forEach(lead => {
-              const equivalentMarketingLead = organicMap[lead]
+            salesLeadOptions.forEach(sale_lead_name => {
+              const equivalentMarketingLead = organicMap[sale_lead_name]
 
               // console.log(equivalentMarketingLead)
 
@@ -374,10 +385,10 @@ export default {
               // console.log(equivalentMarketingResult)
 
               if (equivalentMarketingResult !== undefined) {
-                salesResult[uniqueProduct][lead] = {}
-                salesResult[uniqueProduct][lead]['Non-organic'] = 0
-                salesResult[uniqueProduct][lead]['Organic'] = 0
-                salesResult[uniqueProduct][lead][
+                salesResult[uniqueProduct][sale_lead_name] = {}
+                salesResult[uniqueProduct][sale_lead_name]['Non-organic'] = 0
+                salesResult[uniqueProduct][sale_lead_name]['Organic'] = 0
+                salesResult[uniqueProduct][sale_lead_name][
                   'Lost'
                 ] = equivalentMarketingResult
               }
@@ -391,14 +402,14 @@ export default {
       return salesResult
     },
     summarizeCustomer(sales) {
-      const distinctSalesStatus = new Set(sales.map(x => x.status))
+      const distinctSalesStatus = new Set(sales.map(x => x.status_name))
       const salesResult = {}
 
       for (const uniqueStatus of distinctSalesStatus) {
-        for (const { status } of sales) {
-          if (status === uniqueStatus) {
-            salesResult[status] = salesResult[status]
-              ? salesResult[status] + 1
+        for (const { status_name } of sales) {
+          if (status_name === uniqueStatus) {
+            salesResult[status_name] = salesResult[status_name]
+              ? salesResult[status_name] + 1
               : 1
           }
         }
@@ -418,12 +429,12 @@ export default {
       marketingList.forEach(item => {
         const tempResult = countDistinctKey(
           marketingLeadOptions,
-          'lead',
+          'lead_name',
           item.marketing
         )
 
-        marketingLeadOptions.forEach(lead => {
-          result[lead].push(tempResult[lead])
+        marketingLeadOptions.forEach(lead_name => {
+          result[lead_name].push(tempResult[lead_name])
         })
       })
 
