@@ -19,7 +19,7 @@ import { fetchMarketingList } from '@/api/dashboard'
 export default {
   name: 'MarketingDashboard',
   components: {
-    LinePieChart,
+    LinePieChart
   },
   data() {
     return {
@@ -27,13 +27,13 @@ export default {
       lineChartXAxis: undefined,
       list: undefined,
       listLoading: true,
-      listQuery: undefined,
+      listQuery: undefined
     }
   },
   created() {
     this.listQuery = {
       from: last(7, 'day'),
-      to: new Date(),
+      to: new Date()
     }
     // console.log(this.listQuery)
     this.fetchData()
@@ -53,19 +53,19 @@ export default {
       // Eliminate all but time in all objects of array
       const uniqueTime = uniqueTimeList.map(({ time }) => time)
 
-      this.lineChartXAxis = uniqueTime.map((item) => parseHCMDate(item))
+      this.lineChartXAxis = uniqueTime.map(item => parseHCMDate(item))
 
       this.chartData = this.prepareMarketingChart(uniqueTimeList)
 
       this.listLoading = false
     },
     prepareDistinctTimeList(marketing) {
-      const distinctTimeMarketing = [...new Set(marketing.map((x) => x.time))]
+      const distinctTimeMarketing = [...new Set(marketing.map(x => x.time))]
 
-      const uniqueTimeList = distinctTimeMarketing.map((time) => {
+      const uniqueTimeList = distinctTimeMarketing.map(time => {
         const row = {
-          marketing: marketing.filter((x) => x.time === time),
-          time: time,
+          marketing: marketing.filter(x => x.time === time),
+          time: time
         }
 
         // console.log(row)
@@ -81,17 +81,17 @@ export default {
       const result = {}
       result[sumKey] = []
 
-      marketingLeadOptions.forEach((item) => {
+      marketingLeadOptions.forEach(item => {
         result[item] = []
       })
 
-      productOptions.forEach((item) => {
+      productOptions.forEach(item => {
         result[item] = []
       })
 
       result.pieChartData = [['time']]
 
-      marketingList.forEach((item) => {
+      marketingList.forEach(item => {
         const tempLeadResult = countDistinctKeyByAnotherKey(
           marketingLeadOptions,
           'lead',
@@ -100,7 +100,7 @@ export default {
         )
 
         let sum = 0
-        marketingLeadOptions.forEach((lead) => {
+        marketingLeadOptions.forEach(lead => {
           const leadResult = tempLeadResult[lead]
           result[lead].push(leadResult)
           sum += leadResult
@@ -114,17 +114,17 @@ export default {
           item.marketing
         )
 
-        productOptions.forEach((product) => {
+        productOptions.forEach(product => {
           result[product].push(tempProductResult[product])
         })
 
         result.pieChartData[0].push(item.time)
       })
 
-      productOptions.forEach((product) => {
+      productOptions.forEach(product => {
         const tempRow = [product]
 
-        result[product].forEach((item) => {
+        result[product].forEach(item => {
           tempRow.push(item)
         })
 
@@ -138,14 +138,14 @@ export default {
     handleRangeChange(range) {
       this.listQuery = {
         from: range[0],
-        to: range[1],
+        to: range[1]
       }
       // console.log(this.listQuery)
     },
     handleFilter() {
       this.fetchData()
-    },
-  },
+    }
+  }
 }
 </script>
 
