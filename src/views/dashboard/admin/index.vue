@@ -82,7 +82,7 @@ import TimeTable from './components/TimeTable'
 import { parseHCMDate, last } from '@/utils/time'
 import { countDistinctKey } from '@/utils/object'
 
-import { fetchMarketingList, fetchSalesList } from '@/api/dashboard'
+import { fetchSummary } from '@/api/dashboard'
 
 import waves from '@/directive/waves' // waves directive
 
@@ -151,7 +151,7 @@ export default {
   },
   created() {
     this.listQuery = {
-      from: last(7, 'day'),
+      from: last(1, 'month'),
       to: new Date()
     }
     // console.log(this.listQuery)
@@ -159,18 +159,15 @@ export default {
   },
   methods: {
     async fetchData() {
-      const marketingRes = await fetchMarketingList(this.listQuery)
-      const marketingList = marketingRes.data.items
-      const salesRes = await fetchSalesList(this.listQuery)
-      const salesList = salesRes.data.items
-      // console.log(marketingList)
-
-      this.prepareData(marketingList, salesList)
+      const res = await fetchSummary(this.listQuery)
+      const { marketings, sales, customers } = res.data
+      this.prepareData(marketings, sales, customers)
     },
-    prepareData(marketingList, salesList) {
+    prepareData(marketingList, salesList, customerList) {
       const uniqueTimeList = this.prepareDistinctTimeList(
         marketingList,
-        salesList
+        salesList,
+        customerList
       )
       // console.log(uniqueTimeList)
 
@@ -189,16 +186,17 @@ export default {
       this.list = this.prepareSummarizedList(uniqueTimeList)
       this.listLoading = false
     },
-    prepareDistinctTimeList(marketing, sales) {
-      const distinctTimeMarketing = [...new Set(marketing.map(x => x.time))]
+    prepareDistinctTimeList(marketings, sales, customers) {
+      const distinctTimeMarketing = [...new Set(marketings.map(x => x.time))]
       const distinctTimeSales = [...new Set(sales.map(x => x.time))]
       const distinctTimeConcat = distinctTimeMarketing.concat(distinctTimeSales)
       const distinctTime = [...new Set(distinctTimeConcat)]
 
       const uniqueTimeList = distinctTime.map(time => {
         const row = {
-          marketing: marketing.filter(x => x.time === time),
-          sales: sales.filter(x => x.time === time),
+          marketing: marketings.filter(x => x.time === time),
+          sale: sales.filter(x => x.time === time),
+          customer: customers.filter(x => x.time === time),
           time: time
         }
 
@@ -209,61 +207,16 @@ export default {
       return uniqueTimeList
     },
     prepareSummarizedList(uniqueTimeList) {
-      const newList = []
-      for (const { marketing, sales, time } of uniqueTimeList) {
-        const marketingResult = this.summarizeMarketing(marketing)
-        const customerResult = this.summarizeCustomer(sales)
-        const salesResult = this.summarizeSales(sales)
-        const detailtResult = this.summarizeDetails(sales, marketingResult)
-
-        newList.push({
-          marketing: marketingResult,
-          customer: customerResult,
-          sales: salesResult,
-          detail: detailtResult,
+      return uniqueTimeList.map(item => {
+        const { marketing, sale, time, customer } = item
+        return {
+          marketing: marketing[0],
+          customer: customer[0],
+          sale: sale[0],
+          // detail: detailtResult,
           time: time
-        })
-      }
-
-      return newList
-    },
-    summarizeMarketing(marketing) {
-      const distinctMarketingProduct = new Set(
-        marketing.map(x => x.product_name)
-      )
-      const marketingResult = {}
-
-      for (const uniqueProduct of distinctMarketingProduct) {
-        const tempResult = {}
-        for (const { product_name, lead_name, result } of marketing) {
-          if (product_name === uniqueProduct) {
-            tempResult[lead_name] = tempResult[lead_name]
-              ? tempResult[lead_name] + result
-              : result
-          }
         }
-        marketingResult[uniqueProduct] = tempResult
-      }
-
-      return marketingResult
-    },
-    summarizeSales(sales) {
-      const distinctSalesProduct = new Set(sales.map(x => x.product_name))
-      const salesResult = {}
-
-      for (const uniqueProduct of distinctSalesProduct) {
-        const tempResult = {}
-        for (const { product_name, sale_lead_name } of sales) {
-          if (product_name === uniqueProduct) {
-            tempResult[sale_lead_name] = tempResult[sale_lead_name]
-              ? tempResult[sale_lead_name] + 1
-              : 1
-          }
-        }
-        salesResult[uniqueProduct] = tempResult
-      }
-
-      return salesResult
+      })
     },
     summarizeDetails(sales, marketing) {
       const distinctSalesProduct = new Set(sales.map(x => x.product_name))
@@ -398,22 +351,6 @@ export default {
       }
 
       // console.log(salesResult)
-
-      return salesResult
-    },
-    summarizeCustomer(sales) {
-      const distinctSalesStatus = new Set(sales.map(x => x.status_name))
-      const salesResult = {}
-
-      for (const uniqueStatus of distinctSalesStatus) {
-        for (const { status_name } of sales) {
-          if (status_name === uniqueStatus) {
-            salesResult[status_name] = salesResult[status_name]
-              ? salesResult[status_name] + 1
-              : 1
-          }
-        }
-      }
 
       return salesResult
     },

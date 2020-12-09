@@ -3,7 +3,7 @@
     ref="list"
     v-loading="loading"
     :data="list"
-    :default-sort="{prop: 'time', order: 'descending'}"
+    :default-sort="{ prop: 'time', order: 'descending' }"
     height="500"
     stripe
     style="width: 100%"
@@ -19,7 +19,13 @@
     <!-- <el-table-column label="Ngày" width="180">
       <template slot-scope="{ row }">{{ row.time | parseHCMDate }}</template>
     </el-table-column>-->
-    <el-table-column label="Ngày" sortable width="180" prop="time" :formatter="timeFormatter" />
+    <el-table-column
+      label="Ngày"
+      sortable
+      width="180"
+      prop="time"
+      :formatter="timeFormatter"
+    />
 
     <el-table-column label="Marketing">
       <template slot-scope="{ row }">
@@ -29,7 +35,7 @@
 
     <el-table-column label="Sales">
       <template slot-scope="{ row }">
-        <sales-cell :data="row.sales" />
+        <sales-cell :data="row.sale" />
       </template>
     </el-table-column>
 
@@ -53,22 +59,22 @@ export default {
     MarketingCell,
     CustomerCell,
     ExpandPanel,
-    SalesCell,
+    SalesCell
   },
   filters: {
-    parseHCMDate,
+    parseHCMDate
   },
   props: {
     list: {
       type: Array,
       default() {
         return []
-      },
+      }
     },
     loading: {
       type: Boolean,
-      default: true,
-    },
+      default: true
+    }
   },
   methods: {
     rowClicked(row) {
@@ -76,8 +82,8 @@ export default {
     },
     timeFormatter(row, col, value, index) {
       return parseHCMDate(value)
-    },
-  },
+    }
+  }
 }
 </script>
 
