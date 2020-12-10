@@ -16,7 +16,9 @@
         class="board-item"
       >
         <div class="board-item-customer">{{ element.customer }}</div>
-        <div class="board-item-time">Tương tác cuối: {{ element.modified_time | parseHCMDate }}</div>
+        <div class="board-item-time">
+          Tương tác cuối: {{ element.modified_time | parseHCMDate }}
+        </div>
         <div class="board-item-footer">
           <div class="action">
             <el-button
@@ -28,7 +30,11 @@
             />
           </div>
           <div class="staff-avatar">
-            <el-tooltip effect="dark" :content="element.customer" placement="bottom">
+            <el-tooltip
+              effect="dark"
+              :content="element.customer"
+              placement="bottom"
+            >
               <el-avatar size="medium">{{ element.customer }}</el-avatar>
             </el-tooltip>
           </div>
@@ -46,28 +52,28 @@ import { parseHCMDate } from '@/utils/time'
 export default {
   name: 'DragKanbanDemo',
   components: {
-    draggable,
+    draggable
   },
   filters: {
-    parseHCMDate,
+    parseHCMDate
   },
   props: {
     headerText: {
       type: String,
-      default: 'Header',
+      default: 'Header'
     },
     options: {
       type: Object,
       default() {
         return {}
-      },
+      }
     },
     list: {
       type: Array,
       default() {
         return []
-      },
-    },
+      }
+    }
   },
 
   methods: {
@@ -85,8 +91,8 @@ export default {
 
         const info = {
           id,
-          status_name: this.headerText,
-          modified_time,
+          status: this.headerText,
+          modified_time
         }
 
         // console.log(info)
@@ -95,10 +101,10 @@ export default {
           .then(() => {
             this.$emit('updateColumn', {
               listName: this.headerText,
-              newItem: info,
+              newItem: info
             })
           })
-          .catch((error) => {
+          .catch(error => {
             console.log(error)
           })
       }
@@ -106,8 +112,8 @@ export default {
     handleEdit(id) {
       // console.log(id)
       this.$emit('openForm', id)
-    },
-  },
+    }
+  }
 }
 </script>
 <style lang="scss" scoped>

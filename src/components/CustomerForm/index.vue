@@ -25,13 +25,9 @@
         />
       </el-form-item>
 
-      <el-form-item
-        label="Loại Lead"
-        prop="sale_lead_name"
-        class="dialog-form-item"
-      >
+      <el-form-item label="Loại Lead" prop="lead" class="dialog-form-item">
         <el-select
-          v-model="data.sale_lead_name"
+          v-model="data.lead"
           class="filter-item dialog-form-field"
           placeholder="Chọn loại Lead"
         >
@@ -44,13 +40,9 @@
         </el-select>
       </el-form-item>
 
-      <el-form-item
-        label="Sản Phẩm"
-        prop="product_name"
-        class="dialog-form-item"
-      >
+      <el-form-item label="Sản Phẩm" prop="product" class="dialog-form-item">
         <el-select
-          v-model="data.product_name"
+          v-model="data.product"
           class="filter-item dialog-form-field"
           placeholder="Chọn sản phẩm"
         >
@@ -100,13 +92,9 @@
         />
       </el-form-item>
 
-      <el-form-item
-        label="Chốt Deal"
-        prop="status_name"
-        class="dialog-form-item"
-      >
+      <el-form-item label="Chốt Deal" prop="status" class="dialog-form-item">
         <el-select
-          v-model="data.status_name"
+          v-model="data.status"
           class="filter-item dialog-form-field"
           placeholder="Tình trạng deal"
         >
@@ -171,7 +159,7 @@ export default {
       productOptions: productOptions,
       statusOptions: statusOptions,
       rules: {
-        sale_lead_name: [
+        lead: [
           {
             required: true,
             message: 'Vui lòng chọn loại Lead',
@@ -200,14 +188,14 @@ export default {
             trigger: 'change'
           }
         ],
-        product_name: [
+        product: [
           {
             required: true,
             message: 'Vui lòng chọn loại sản phẩm',
             trigger: 'change'
           }
         ],
-        status_name: [
+        status: [
           {
             required: true,
             message: 'Vui lòng chọn trạng thái khách hàng',
@@ -260,17 +248,17 @@ export default {
 
             // console.log(tempData)
 
-            // console.log(this.data.status_name)
+            // console.log(this.data.status)
             // console.log(this.tempStatus)
 
-            const { id, status_name } = this.data
+            const { id, status } = this.data
 
-            if (this.data.status_name !== this.tempStatus) {
+            if (this.data.status !== this.tempStatus) {
               const modified_time = new Date().toISOString()
 
               const info = {
                 id,
-                status_name,
+                status,
                 modified_time
               }
               tempData.modified_time = modified_time
@@ -287,7 +275,7 @@ export default {
                   })
 
                   resolve({
-                    listName: status_name,
+                    listName: status,
                     newItem: info
                   })
                 })

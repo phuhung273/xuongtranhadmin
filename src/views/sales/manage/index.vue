@@ -15,7 +15,12 @@
         style="width: 140px"
         class="filter-item"
       >
-        <el-option v-for="item in leadOptions" :key="item" :label="item" :value="item" />
+        <el-option
+          v-for="item in leadOptions"
+          :key="item"
+          :label="item"
+          :value="item"
+        />
       </el-select>
 
       <el-button
@@ -24,7 +29,8 @@
         type="primary"
         icon="el-icon-search"
         @click="handleFilter"
-      >Tìm Kiếm</el-button>
+        >Tìm Kiếm</el-button
+      >
 
       <el-button
         class="filter-item"
@@ -32,7 +38,8 @@
         type="primary"
         icon="el-icon-edit"
         @click="handleCreate"
-      >Thêm Khách Hàng</el-button>
+        >Thêm Khách Hàng</el-button
+      >
 
       <!-- <el-button
         v-waves
@@ -48,7 +55,7 @@
       :key="tableKey"
       v-loading="listLoading"
       :data="list"
-      :default-sort="{prop: 'time', order: 'descending'}"
+      :default-sort="{ prop: 'time', order: 'descending' }"
       border
       fit
       stripe
@@ -66,7 +73,9 @@
 
       <el-table-column label="Khách Hàng" width="200px">
         <template slot-scope="{ row }">
-          <span class="link-type" @click="handleUpdate(row)">{{ row.customer }}</span>
+          <span class="link-type" @click="handleUpdate(row)">{{
+            row.customer
+          }}</span>
         </template>
       </el-table-column>
 
@@ -74,7 +83,7 @@
         label="Loại Lead"
         width="150px"
         align="center"
-        prop="sale_lead_name"
+        prop="lead"
         :filters="getFilters(leadOptions)"
         :filter-method="handleTableFilter"
       />
@@ -83,20 +92,30 @@
         label="Sản Phẩm"
         width="150px"
         align="center"
-        prop="product_name"
+        prop="product"
         :filters="getFilters(productOptions)"
         :filter-method="handleTableFilter"
       />
 
-      <el-table-column label="Nhu Cầu Cụ Thể" width="200px" align="center" prop="demand" />
+      <el-table-column
+        label="Nhu Cầu Cụ Thể"
+        width="200px"
+        align="center"
+        prop="demand"
+      />
 
-      <el-table-column label="Tương Tác" width="300px" align="center" prop="connection" />
+      <el-table-column
+        label="Tương Tác"
+        width="300px"
+        align="center"
+        prop="connection"
+      />
 
       <el-table-column
         label="Chốt Deal"
         class-name="status-col"
         width="150px"
-        prop="status_name"
+        prop="status"
         :filters="getFilters(statusOptions)"
         :filter-method="handleTableFilter"
       />
@@ -112,14 +131,17 @@
         class-name="small-padding fixed-width"
       >
         <template slot-scope="{ row, $index }">
-          <el-button type="primary" size="mini" @click="handleUpdate(row)">Chỉnh Sửa</el-button>
+          <el-button type="primary" size="mini" @click="handleUpdate(row)"
+            >Chỉnh Sửa</el-button
+          >
 
           <el-button
             v-if="row.status != 'deleted'"
             size="mini"
             type="danger"
             @click="handleDelete(row, $index)"
-          >Xoá</el-button>
+            >Xoá</el-button
+          >
         </template>
       </el-table-column>
     </el-table>
@@ -158,21 +180,20 @@ import {
   fetchCustomerList,
   createCustomer,
   updateCustomer,
-  deleteCustomer,
+  deleteCustomer
 } from '@/api/sales'
 
 import { fillFormObject } from '@/utils/form'
 import waves from '@/directive/waves' // waves directive
 import { parseHCMDate } from '@/utils/time'
 import CustomerForm from '@/components/CustomerForm'
-import { salesLeadOptions, productOptions, statusOptions } from '@/settings'
 
 export default {
   name: 'ComplexTable',
   components: { CustomerForm },
   directives: { waves },
   filters: {
-    parseHCMDate,
+    parseHCMDate
   },
   data() {
     return {
@@ -183,32 +204,30 @@ export default {
       listQuery: {
         page: 1,
         limit: 20,
-        lead: undefined,
+        lead: undefined
       },
-      // leadOptions: ['Facebook inbox', 'Hotline call', 'Zalo call/inbox'],
-      // productOptions: ['Tranh Canvas', 'Tranh vẽ tường'],
-      leadOptions: salesLeadOptions,
-      productOptions: productOptions,
-      statusOptions: statusOptions,
+      leadOptions: [],
+      productOptions: [],
+      statusOptions: [],
       temp: {
         id: undefined,
         customer: undefined,
-        sale_lead_name: undefined,
+        lead: undefined,
         demand: undefined,
         connection: undefined,
-        status_name: undefined,
+        status: undefined,
         email: undefined,
         phone: undefined,
-        product_name: undefined,
+        product: undefined,
         time: undefined,
-        modified_time: undefined,
+        modified_time: undefined
       },
       dialogFormVisible: false,
       dialogFormLoading: false,
       dialogStatus: '',
       textMap: {
         update: 'Chỉnh Sửa',
-        create: 'Thêm Khách Hàng',
+        create: 'Thêm Khách Hàng'
       },
       dialogPvVisible: false,
       pvData: [],
@@ -217,7 +236,7 @@ export default {
       dialogDeleteLoading: false,
       tempDeleteIndex: undefined,
       tempDeleteId: undefined,
-      tempStatus: undefined,
+      tempStatus: undefined
     }
   },
   created() {
@@ -229,10 +248,21 @@ export default {
 
       // console.log(this.listQuery)
 
-      fetchCustomerList(this.listQuery).then((response) => {
+      fetchCustomerList(this.listQuery).then(response => {
         // console.log(response)
-        this.list = response.data.items
-        this.total = response.data.total
+        const {
+          items,
+          productOptions,
+          leadOptions,
+          statusOptions,
+          total
+        } = response.data
+
+        this.list = items
+        this.total = total
+        this.leadOptions = leadOptions
+        this.statusOptions = statusOptions
+        this.productOptions = productOptions
         this.listLoading = false
 
         // console.log(this.list)
@@ -252,15 +282,15 @@ export default {
       this.temp = {
         id: undefined,
         customer: undefined,
-        sale_lead_name: undefined,
+        lead: undefined,
         demand: undefined,
         connection: undefined,
-        status_name: undefined,
+        status: undefined,
         email: undefined,
         phone: undefined,
-        product_name: undefined,
+        product: undefined,
         time: undefined,
-        modified_time: undefined,
+        modified_time: undefined
       }
     },
     handleBeforeSubmit() {
@@ -323,7 +353,7 @@ export default {
       //   this.$refs['dataForm'].clearValidate()
       // })
 
-      this.tempStatus = this.temp.status_name
+      this.tempStatus = this.temp.status
       this.openForm()
     },
     updateData() {
@@ -346,7 +376,7 @@ export default {
       //     })
       //   }
       // })
-      const index = this.list.findIndex((v) => v.id === this.temp.id)
+      const index = this.list.findIndex(v => v.id === this.temp.id)
       this.list.splice(index, 1, this.temp)
       this.dialogFormLoading = false
       this.dialogFormVisible = false
@@ -359,7 +389,7 @@ export default {
     deleteData() {
       this.dialogDeleteLoading = true
 
-      deleteCustomer( this.tempDeleteId ).then(() => {
+      deleteCustomer(this.tempDeleteId).then(() => {
         this.list.splice(this.tempDeleteIndex, 1)
         this.dialogDeleteLoading = false
         this.dialogDeleteVisible = false
@@ -368,7 +398,7 @@ export default {
           title: 'Thành Công',
           message: 'Xoá thành công',
           type: 'success',
-          duration: 2000,
+          duration: 2000
         })
       })
     },
@@ -376,10 +406,10 @@ export default {
       return parseHCMDate(value)
     },
     getFilters(options) {
-      return options.map((option) => {
+      return options.map(option => {
         return {
           text: option,
-          value: option,
+          value: option
         }
       })
     },
@@ -388,11 +418,11 @@ export default {
       return row[prop] === value
     },
     handleFetchPv(pv) {
-      fetchPv(pv).then((response) => {
+      fetchPv(pv).then(response => {
         this.pvData = response.data.pvData
         this.dialogPvVisible = true
       })
-    },
-  },
+    }
+  }
 }
 </script>

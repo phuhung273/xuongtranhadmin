@@ -16,7 +16,12 @@
         class="filter-item"
         @keyup.enter.native="Table"
       >
-        <el-option v-for="item in sourceOptions" :key="item" :label="item" :value="item" />
+        <el-option
+          v-for="item in sourceOptions"
+          :key="item"
+          :label="item"
+          :value="item"
+        />
       </el-select>
 
       <el-button
@@ -25,7 +30,8 @@
         type="primary"
         icon="el-icon-search"
         @click="Table"
-      >Tìm Kiếm</el-button>
+        >Tìm Kiếm</el-button
+      >
 
       <el-button
         class="filter-item"
@@ -33,7 +39,8 @@
         type="primary"
         icon="el-icon-edit"
         @click="handleCreate"
-      >Thêm Task</el-button>
+        >Thêm Task</el-button
+      >
 
       <!-- <el-button
         v-waves
@@ -49,7 +56,7 @@
       :key="tableKey"
       v-loading="listLoading"
       :data="list"
-      :default-sort="{prop: 'time', order: 'descending'}"
+      :default-sort="{ prop: 'time', order: 'descending' }"
       border
       fit
       stripe
@@ -58,7 +65,9 @@
     >
       <el-table-column label="Ngày" sortable width="150px" align="center">
         <template slot-scope="{ row }">
-          <span class="link-type" @click="handleUpdate(row)">{{ row.time | parseHCMDate }}</span>
+          <span class="link-type" @click="handleUpdate(row)">{{
+            row.time | parseHCMDate
+          }}</span>
         </template>
       </el-table-column>
 
@@ -80,7 +89,7 @@
         label="Nguồn"
         width="150px"
         align="center"
-        prop="source_name"
+        prop="source"
         :filters="getFilters(sourceOptions)"
         :filter-method="handleTableFilter"
       />
@@ -89,7 +98,7 @@
         label="Sản Phẩm"
         width="150px"
         align="center"
-        prop="product_name"
+        prop="product"
         :filters="getFilters(productOptions)"
         :filter-method="handleTableFilter"
       />
@@ -98,14 +107,24 @@
         label="Loại Lead"
         width="150px"
         align="center"
-        prop="lead_name"
+        prop="lead"
         :filters="getFilters(leadOptions)"
         :filter-method="handleTableFilter"
       />
 
-      <el-table-column label="Kết Quả" width="80px" align="center" prop="result" />
+      <el-table-column
+        label="Kết Quả"
+        width="80px"
+        align="center"
+        prop="result"
+      />
 
-      <el-table-column label="Nội Dung" width="300px" align="center" prop="content" />
+      <el-table-column
+        label="Nội Dung"
+        width="300px"
+        align="center"
+        prop="content"
+      />
 
       <!-- <el-table-column
         v-if="showReviewer"
@@ -143,13 +162,16 @@
         class-name="small-padding fixed-width"
       >
         <template slot-scope="{ row, $index }">
-          <el-button type="primary" size="mini" @click="handleUpdate(row)">Chỉnh Sửa</el-button>
+          <el-button type="primary" size="mini" @click="handleUpdate(row)"
+            >Chỉnh Sửa</el-button
+          >
           <el-button
             v-if="row.status != 'deleted'"
             size="mini"
             type="danger"
             @click="handleDelete(row, $index)"
-          >Xoá</el-button>
+            >Xoá</el-button
+          >
         </template>
       </el-table-column>
     </el-table>
@@ -168,21 +190,48 @@
         label-width="100px"
         style="width: 400px; margin-left:50px;"
       >
-        <el-form-item label="Nguồn" prop="source_name">
-          <el-select v-model="temp.source_name" class="filter-item" placeholder="Chọn nguồn">
-            <el-option v-for="item in sourceOptions" :key="item" :label="item" :value="item" />
+        <el-form-item label="Nguồn" prop="source">
+          <el-select
+            v-model="temp.source"
+            class="filter-item"
+            placeholder="Chọn nguồn"
+          >
+            <el-option
+              v-for="item in sourceOptions"
+              :key="item"
+              :label="item"
+              :value="item"
+            />
           </el-select>
         </el-form-item>
 
-        <el-form-item label="Sản Phẩm" prop="product_name">
-          <el-select v-model="temp.product_name" class="filter-item" placeholder="Chọn sản phẩm">
-            <el-option v-for="item in productOptions" :key="item" :label="item" :value="item" />
+        <el-form-item label="Sản Phẩm" prop="product">
+          <el-select
+            v-model="temp.product"
+            class="filter-item"
+            placeholder="Chọn sản phẩm"
+          >
+            <el-option
+              v-for="item in productOptions"
+              :key="item"
+              :label="item"
+              :value="item"
+            />
           </el-select>
         </el-form-item>
 
-        <el-form-item label="Loại Lead" prop="lead_name">
-          <el-select v-model="temp.lead_name" class="filter-item" placeholder="Chọn sản phẩm">
-            <el-option v-for="item in leadOptions" :key="item" :label="item" :value="item" />
+        <el-form-item label="Loại Lead" prop="lead">
+          <el-select
+            v-model="temp.lead"
+            class="filter-item"
+            placeholder="Chọn sản phẩm"
+          >
+            <el-option
+              v-for="item in leadOptions"
+              :key="item"
+              :label="item"
+              :value="item"
+            />
           </el-select>
         </el-form-item>
 
@@ -219,7 +268,8 @@
         <el-button
           type="primary"
           @click="dialogStatus === 'create' ? createData() : updateData()"
-        >Xác Nhận</el-button>
+          >Xác Nhận</el-button
+        >
       </div>
     </el-dialog>
 
@@ -237,12 +287,20 @@
     </el-dialog>
 
     <el-dialog :visible.sync="dialogPvVisible" title="Reading statistics">
-      <el-table :data="pvData" border fit highlight-current-row style="width: 100%">
+      <el-table
+        :data="pvData"
+        border
+        fit
+        highlight-current-row
+        style="width: 100%"
+      >
         <el-table-column prop="key" label="Channel" />
         <el-table-column prop="pv" label="Pv" />
       </el-table>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="dialogPvVisible = false">Confirm</el-button>
+        <el-button type="primary" @click="dialogPvVisible = false"
+          >Confirm</el-button
+        >
       </span>
     </el-dialog>
   </div>
@@ -254,17 +312,12 @@ import {
   fetchMarketingList,
   createMarketingTask,
   updateMarketingTask,
-  deleteMarketingTask,
+  deleteMarketingTask
 } from '@/api/marketing'
 import { fillFormObject } from '@/utils/form'
 import waves from '@/directive/waves' // waves directive
 
 import { parseHCMDate } from '@/utils/time'
-import {
-  marketingLeadOptions,
-  marketingSourceOptions,
-  productOptions,
-} from '@/settings'
 
 export default {
   name: 'ComplexTable',
@@ -275,73 +328,73 @@ export default {
       const statusMap = {
         published: 'success',
         draft: 'info',
-        deleted: 'danger',
+        deleted: 'danger'
       }
       return statusMap[status]
     },
-    parseHCMDate,
+    parseHCMDate
   },
   data() {
     return {
       tableKey: 0,
       // list: null,
       list: [],
+      leadOptions: [],
+      sourceOptions: [],
+      productOptions: [],
       total: 0,
       listLoading: true,
       listQuery: {
         page: 1,
         limit: 20,
-        source: undefined,
+        source: undefined
       },
-      sourceOptions: marketingSourceOptions,
-      leadOptions: marketingLeadOptions,
-      productOptions: productOptions,
       temp: {
         id: undefined,
-        source_name: undefined,
-        product_name: undefined,
+        source: undefined,
+        product: undefined,
         content: undefined,
         time: undefined,
         result: undefined,
-        lead_name: undefined,
+        lead: undefined
       },
       dialogFormVisible: false,
       dialogStatus: '',
       textMap: {
         update: 'Chỉnh Sửa',
-        create: 'Thêm Task',
+        create: 'Thêm Task'
       },
       dialogPvVisible: false,
       pvData: [],
       rules: {
-        source_name: [
-          { required: true, message: 'Vui lòng nhập nguồn', trigger: 'change' },
+        source: [
+          { required: true, message: 'Vui lòng nhập nguồn', trigger: 'change' }
         ],
         time: [
           {
             type: 'date',
             required: true,
             message: 'Vui lòng nhập ngày',
-            trigger: 'change',
-          },
+            trigger: 'change'
+          }
         ],
-        product_name: [
+        product: [
           {
             required: true,
             message: 'Vui lòng nhập sản phẩm',
-            trigger: 'blur',
-          },
+            trigger: 'blur'
+          }
         ],
         result: [
-          { required: true, message: 'Vui lòng nhập số', trigger: 'blur' },
-        ],
+          { required: true, message: 'Vui lòng nhập số', trigger: 'blur' }
+        ]
       },
       downloadLoading: false,
       dialogFormLoading: false,
       dialogDeleteVisible: false,
       dialogDeleteLoading: false,
       tempDeleteIndex: undefined,
-      tempDeleteId: undefined,
+      tempDeleteId: undefined
     }
   },
   created() {
@@ -360,10 +413,21 @@ export default {
       //     }, 1.5 * 1000)
       //   })
 
-      fetchMarketingList(this.listQuery).then((response) => {
+      fetchMarketingList(this.listQuery).then(response => {
         // console.log(response)
-        this.list = response.data.items
-        this.total = response.data.total
+        const {
+          items,
+          sourceOptions,
+          leadOptions,
+          productOptions,
+          total
+        } = response.data
+
+        this.list = items
+        this.sourceOptions = sourceOptions
+        this.leadOptions = leadOptions
+        this.productOptions = productOptions
+        this.total = total
         this.listLoading = false
 
         // console.log(this.list)
@@ -375,12 +439,12 @@ export default {
     },
     resetTemp() {
       this.temp = {
-        source_name: undefined,
-        product_name: undefined,
+        source: undefined,
+        product: undefined,
         content: undefined,
         time: undefined,
         result: undefined,
-        lead_name: undefined,
+        lead: undefined
       }
     },
     handleCreate() {
@@ -392,7 +456,7 @@ export default {
       })
     },
     createData() {
-      this.$refs['dataForm'].validate((valid) => {
+      this.$refs['dataForm'].validate(valid => {
         if (valid) {
           fillFormObject(this.temp)
           // console.log(this.temp)
@@ -421,7 +485,7 @@ export default {
               title: 'Thành Công',
               message: 'Thêm thành công',
               type: 'success',
-              duration: 2000,
+              duration: 2000
             })
           })
         }
@@ -439,7 +503,7 @@ export default {
       })
     },
     updateData() {
-      this.$refs['dataForm'].validate((valid) => {
+      this.$refs['dataForm'].validate(valid => {
         if (valid) {
           const tempData = Object.assign({}, this.temp)
 
@@ -450,7 +514,7 @@ export default {
           delete tempData.id
 
           updateMarketingTask(tempData, id).then(() => {
-            const index = this.list.findIndex((v) => v.id === this.temp.id)
+            const index = this.list.findIndex(v => v.id === this.temp.id)
             this.list.splice(index, 1, this.temp)
             this.dialogFormLoading = false
             this.dialogFormVisible = false
@@ -459,7 +523,7 @@ export default {
               title: 'Thành Công',
               message: 'Chỉnh sửa thành công',
               type: 'success',
-              duration: 2000,
+              duration: 2000
             })
           })
         }
@@ -482,7 +546,7 @@ export default {
           title: 'Thành Công',
           message: 'Xoá thành công',
           type: 'success',
-          duration: 2000,
+          duration: 2000
         })
       })
     },
@@ -490,10 +554,10 @@ export default {
       return parseHCMDate(value)
     },
     getFilters(options) {
-      return options.map((option) => {
+      return options.map(option => {
         return {
           text: option,
-          value: option,
+          value: option
         }
       })
     },
@@ -502,11 +566,11 @@ export default {
       return row[prop] === value
     },
     handleFetchPv(pv) {
-      fetchPv(pv).then((response) => {
+      fetchPv(pv).then(response => {
         this.pvData = response.data.pvData
         this.dialogPvVisible = true
       })
-    },
-  },
+    }
+  }
 }
 </script>

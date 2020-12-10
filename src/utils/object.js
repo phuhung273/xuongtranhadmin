@@ -82,3 +82,12 @@ export function keepKeys(options, obj) {
 
   return newObj
 }
+
+export function replaceKeys(obj, assocObj) {
+  for (const [oldKey, newKey] of Object.entries(assocObj)) {
+    obj[newKey] = obj[oldKey]
+    delete obj[oldKey]
+  }
+
+  return obj
+}

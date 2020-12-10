@@ -1,12 +1,12 @@
 <template>
   <div v-if="!listLoading" class="components-container board">
     <Kanban
-      v-for="status_name in statusObjects"
-      :key="status_name.name + status_name.componentKey"
+      v-for="status in statusObjects"
+      :key="status.name + status.componentKey"
       :group="group"
-      :header-text="status_name.name"
+      :header-text="status.name"
       class="kanban"
-      :list="getListBasedOnStatus(status_name.name)"
+      :list="getListBasedOnStatus(status.name)"
       @openForm="openForm"
       @updateColumn="handleModifiedTimeUpdate"
     />
@@ -114,13 +114,13 @@ export default {
       temp: {
         id: undefined,
         customer: undefined,
-        sale_lead_name: undefined,
+        lead: undefined,
         demand: undefined,
         connection: undefined,
-        status_name: undefined,
+        status: undefined,
         email: undefined,
         phone: undefined,
-        product_name: undefined,
+        product: undefined,
         time: undefined,
         modified_time: undefined
       },
@@ -140,18 +140,16 @@ export default {
         // console.log(this.list[this.statusObjects[0]])
       })
     },
-    getListBasedOnStatus(status_name) {
-      return this.list[status_name]
+    getListBasedOnStatus(status) {
+      return this.list[status]
     },
     prepareDraggableList(items) {
       const newList = {}
 
-      this.statusObjects.forEach(status_name => {
-        const statusList = items.filter(
-          item => item.status_name === status_name.name
-        )
+      this.statusObjects.forEach(status => {
+        const statusList = items.filter(item => item.status === status.name)
 
-        newList[status_name.name] = statusList
+        newList[status.name] = statusList
       })
 
       return newList
@@ -170,7 +168,7 @@ export default {
         // }, 1000)
         this.temp = response.data.items[0]
         this.dialogFormLoading = false
-        this.tempStatus = this.temp.status_name
+        this.tempStatus = this.temp.status
       })
     },
     closeForm() {
@@ -180,13 +178,13 @@ export default {
       this.temp = {
         id: undefined,
         customer: undefined,
-        sale_lead_name: undefined,
+        lead: undefined,
         demand: undefined,
         connection: undefined,
-        status_name: undefined,
+        status: undefined,
         email: undefined,
         phone: undefined,
-        product_name: undefined,
+        product: undefined,
         time: undefined,
         modified_time: undefined
       }
@@ -201,8 +199,8 @@ export default {
       // console.log(submitItem)
 
       const newList = { ...this.list }
-      if (this.temp.status_name === this.tempStatus) {
-        let oldStatusList = [...this.list[this.temp.status_name]]
+      if (this.temp.status === this.tempStatus) {
+        let oldStatusList = [...this.list[this.temp.status]]
         oldStatusList = oldStatusList.map(item => {
           return item.id === this.temp.id ? this.temp : item
         })
@@ -215,36 +213,36 @@ export default {
         newList[this.tempStatus] = oldStatusList
         // console.log(newList)
 
-        const newStatusList = [...this.list[this.temp.status_name]]
+        const newStatusList = [...this.list[this.temp.status]]
 
         const { newItem } = submitItem
         this.temp.modified_time = newItem.modified_time
         newStatusList.unshift(this.temp)
-        newList[this.temp.status_name] = newStatusList
+        newList[this.temp.status] = newStatusList
       }
 
-      // console.log(this.temp.status_name)
+      // console.log(this.temp.status)
       // console.log(this.tempStatus)
       this.list = { ...newList }
 
       // // Change key to rerender
-      // const newStatusObjects = this.statusObjects.map((status_name) => {
+      // const newStatusObjects = this.statusObjects.map((status) => {
       //   if (
-      //     status_name.name === this.temp.status_name ||
-      //     status_name.name === this.tempStatus
+      //     status.name === this.temp.status ||
+      //     status.name === this.tempStatus
       //   ) {
       //     return {
-      //       name: status_name.name,
-      //       componentKey: status_name.componentKey + 1,
+      //       name: status.name,
+      //       componentKey: status.componentKey + 1,
       //     }
       //   }
 
-      //   return status_name
+      //   return status
       // })
 
       // this.statusObjects = [...newStatusObjects]
 
-      this.reRenderStatuses([this.tempStatus, this.temp.status_name])
+      this.reRenderStatuses([this.tempStatus, this.temp.status])
 
       this.dialogFormVisible = false
       this.dialogFormLoading = false
@@ -271,23 +269,23 @@ export default {
     },
     reRenderStatus(statusName) {
       // Change key to rerender
-      const newStatusObjects = this.statusObjects.map(status_name => {
-        if (status_name.name === statusName) {
+      const newStatusObjects = this.statusObjects.map(status => {
+        if (status.name === statusName) {
           return {
-            name: status_name.name,
-            componentKey: status_name.componentKey + 1
+            name: status.name,
+            componentKey: status.componentKey + 1
           }
         }
 
-        return status_name
+        return status
       })
 
       this.statusObjects = [...newStatusObjects]
       // console.log(this.statusObjects)
     },
     reRenderStatuses(statusList) {
-      statusList.forEach(status_name => {
-        this.reRenderStatus(status_name)
+      statusList.forEach(status => {
+        this.reRenderStatus(status)
       })
     }
   }
