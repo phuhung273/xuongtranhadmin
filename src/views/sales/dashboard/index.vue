@@ -11,27 +11,27 @@ import LineMultiPieChart from '@/components/Chart/LineMultiPieChart'
 import { last, parseHCMDate } from '@/utils/time'
 import { deleteKeys, countDistinctKey } from '@/utils/object'
 
-import { productOptions, salesLeadOptions, statusOptions } from '@/settings'
-
 import { fetchSalesList } from '@/api/dashboard'
 export default {
   name: 'SalesDashboard',
   components: {
-    LineMultiPieChart,
+    LineMultiPieChart
   },
   data() {
     return {
       chartData: {},
       lineChartXAxis: undefined,
       list: undefined,
+      productOptions: [],
+      leadOptions: [],
       listLoading: true,
-      listQuery: undefined,
+      listQuery: undefined
     }
   },
   created() {
     this.listQuery = {
-      from: last(7, 'day'),
-      to: new Date(),
+      from: last(7, 'month'),
+      to: new Date()
     }
     // console.log(this.listQuery)
     this.fetchData()
@@ -39,120 +39,106 @@ export default {
   methods: {
     async fetchData() {
       const response = await fetchSalesList(this.listQuery)
-      const list = response.data.items
-      // console.log(list)
+      const {
+        totalResult,
+        resultProduct,
+        resultLead,
+        productOptions,
+        leadOptions
+      } = response.data
 
-      this.prepareData(list)
+      this.productOptions = productOptions
+      this.leadOptions = leadOptions
+
+      this.prepareData(totalResult, resultProduct, resultLead)
     },
-    prepareData(list) {
-      const uniqueTimeList = this.prepareDistinctTimeList(list)
-      // console.log(uniqueTimeList)
-
+    prepareData(totalResult, resultProduct, resultLead) {
       // Eliminate all but time in all objects of array
-      const uniqueTime = uniqueTimeList.map(({ time }) => time)
+      const uniqueTime = totalResult.map(({ time }) => time)
 
-      this.lineChartXAxis = uniqueTime.map((item) => parseHCMDate(item))
+      this.lineChartXAxis = uniqueTime.map(item => parseHCMDate(item))
 
-      this.chartData = this.prepareChartData(uniqueTimeList)
+      this.chartData = this.prepareChartData(
+        totalResult,
+        resultProduct,
+        resultLead
+      )
 
       this.listLoading = false
     },
-    prepareDistinctTimeList(list) {
-      const distinctTime = [...new Set(list.map((x) => x.time))]
-
-      const uniqueTimeList = distinctTime.map((time) => {
-        const row = {
-          main: list.filter((x) => x.time === time),
-          time: time,
-        }
-
-        // console.log(row)
-        return row
-      })
-
-      return uniqueTimeList
-    },
-    prepareChartData(uniqueTimeList) {
-      //   console.log(uniqueTimeList)
-
+    prepareChartData(totalResult, resultProduct, resultLead) {
       const sumKey = 'Tổng số khách hàng'
-      const result = {}
-      result[sumKey] = []
+      const finalResult = {}
+      finalResult[sumKey] = []
 
-      productOptions.forEach((item) => {
-        result[item] = []
+      this.productOptions.forEach(item => {
+        finalResult[item] = []
       })
 
-      salesLeadOptions.forEach((item) => {
-        result[item] = []
+      this.leadOptions.forEach(item => {
+        finalResult[item] = []
       })
 
-      result.productPieChartData = [['time']]
-      result.leadPieChartData = [['time']]
+      finalResult.productPieChartData = [['time']]
+      finalResult.leadPieChartData = [['time']]
 
-      uniqueTimeList.forEach((item) => {
-        result[sumKey].push(item.main.length)
+      totalResult.forEach(item => {
+        finalResult[sumKey].push(item.result)
+      })
 
-        const tempProductResult = countDistinctKey(
-          productOptions,
-          'product',
-          item.main
-        )
-
-        productOptions.forEach((product) => {
-          result[product].push(tempProductResult[product])
+      resultProduct.forEach(item => {
+        item.products.forEach(x => {
+          const { product, result } = x
+          finalResult[product].push(result)
         })
 
-        const tempLeadResult = countDistinctKey(
-          salesLeadOptions,
-          'lead',
-          item.main
-        )
-
-        salesLeadOptions.forEach((lead) => {
-          result[lead].push(tempLeadResult[lead])
-        })
-
-        result.productPieChartData[0].push(item.time)
-        result.leadPieChartData[0].push(item.time)
+        finalResult.productPieChartData[0].push(item.time)
+        finalResult.leadPieChartData[0].push(item.time)
       })
 
-      productOptions.forEach((product) => {
+      resultLead.forEach(item => {
+        item.leads.forEach(x => {
+          const { lead, result } = x
+          finalResult[lead].push(result)
+        })
+      })
+
+      this.productOptions.forEach(product => {
         const tempRow = [product]
 
-        result[product].forEach((item) => {
+        finalResult[product].forEach(item => {
           tempRow.push(item)
         })
 
-        result.productPieChartData.push(tempRow)
+        finalResult.productPieChartData.push(tempRow)
       })
 
-      salesLeadOptions.forEach((lead) => {
+      this.leadOptions.forEach(lead => {
         const tempRow = [lead]
 
-        result[lead].forEach((item) => {
+        finalResult[lead].forEach(item => {
           tempRow.push(item)
         })
 
-        result.leadPieChartData.push(tempRow)
+        finalResult.leadPieChartData.push(tempRow)
       })
 
-      const deleteOptions = [...productOptions, ...salesLeadOptions]
-      const finalResult = deleteKeys(deleteOptions, result)
-      //   console.log(finalResult)
-      return finalResult
+      const deleteOptions = [...this.productOptions, ...this.leadOptions]
+      const lastResult = deleteKeys(deleteOptions, finalResult)
+      // console.log(lastResult)
+      return lastResult
     },
     handleRangeChange(range) {
       this.listQuery = {
         from: range[0],
-        to: range[1],
+        to: range[1]
       }
       // console.log(this.listQuery)
     },
     handleFilter() {
       this.fetchData()
-    },
-  },
+    }
+  }
 }
 </script>
 

@@ -65,6 +65,7 @@
           <line-chart
             title="Marketing Performance"
             :chart-data="lineChartData"
+            :options="marketingLeadOptions"
             :x-axis="lineChartXAxis"
           />
         </div>
@@ -86,11 +87,7 @@ import { fetchSummary } from '@/api/dashboard'
 
 import waves from '@/directive/waves' // waves directive
 
-import {
-  marketingLeadOptions,
-  salesLeadOptions,
-  productOptions
-} from '@/settings'
+import { salesLeadOptions, productOptions } from '@/settings'
 
 const organicMap = {
   'Facebook inbox': 'Facebook inbox',
@@ -113,6 +110,7 @@ export default {
       lineChartData: {},
       lineChartXAxis: undefined,
       list: undefined,
+      marketingLeadOptions: [],
       listLoading: true,
       listQuery: undefined,
       pickerOptions: {
@@ -160,10 +158,17 @@ export default {
   methods: {
     async fetchData() {
       const res = await fetchSummary(this.listQuery)
-      const { marketings, sales, customers } = res.data
-      this.prepareData(marketings, sales, customers)
+      const {
+        marketings,
+        sales,
+        customers,
+        marketingLeadOptions,
+        marketingPerformance
+      } = res.data
+      this.marketingLeadOptions = marketingLeadOptions
+      this.prepareData(marketings, sales, customers, marketingPerformance)
     },
-    prepareData(marketingList, salesList, customerList) {
+    prepareData(marketingList, salesList, customerList, marketingPerformance) {
       const uniqueTimeList = this.prepareDistinctTimeList(
         marketingList,
         salesList,
@@ -171,17 +176,17 @@ export default {
       )
       // console.log(uniqueTimeList)
 
-      // Eliminate sales in all objects of array
-      const uniqueMarketingTimeList = uniqueTimeList.map(
-        ({ sales, ...rest }) => rest
-      )
+      // const uniqueMarketingTimeList = uniqueTimeList.map(
+      //   ({ marketing, ...rest }) => marketing
+      // )
 
       // Eliminate all but time in all objects of array
       const uniqueTime = uniqueTimeList.map(({ time }) => time)
 
       this.lineChartXAxis = uniqueTime.map(item => parseHCMDate(item))
 
-      this.lineChartData = this.prepareMarketingChart(uniqueMarketingTimeList)
+      // this.lineChartData = this.prepareMarketingChart(uniqueMarketingTimeList)
+      this.lineChartData = this.prepareMarketingChart(marketingPerformance)
 
       this.list = this.prepareSummarizedList(uniqueTimeList)
       this.listLoading = false
@@ -194,9 +199,9 @@ export default {
 
       const uniqueTimeList = distinctTime.map(time => {
         const row = {
-          marketing: marketings.filter(x => x.time === time),
-          sale: sales.filter(x => x.time === time),
-          customer: customers.filter(x => x.time === time),
+          marketing: marketings.find(x => x.time === time),
+          sale: sales.find(x => x.time === time),
+          customer: customers.find(x => x.time === time),
           time: time
         }
 
@@ -210,9 +215,9 @@ export default {
       return uniqueTimeList.map(item => {
         const { marketing, sale, time, customer } = item
         return {
-          marketing: marketing[0],
-          customer: customer[0],
-          sale: sale[0],
+          marketing: marketing,
+          customer: customer,
+          sale: sale,
           // detail: detailtResult,
           time: time
         }
@@ -355,27 +360,20 @@ export default {
       return salesResult
     },
     prepareMarketingChart(marketingList) {
-      // console.log(marketingList)
-
       const result = {}
 
-      marketingLeadOptions.forEach(item => {
+      this.marketingLeadOptions.map(item => {
         result[item] = []
       })
 
       marketingList.forEach(item => {
-        const tempResult = countDistinctKey(
-          marketingLeadOptions,
-          'lead_name',
-          item.marketing
-        )
-
-        marketingLeadOptions.forEach(lead_name => {
-          result[lead_name].push(tempResult[lead_name])
+        this.marketingLeadOptions.forEach(lead_name => {
+          const rightItem = item.leads.find(x => x.lead === lead_name)
+          const tempResult = rightItem ? rightItem.result : 0
+          result[lead_name].push(tempResult)
         })
       })
 
-      // console.log(result)
       return result
     },
     handleRangeChange(range) {
